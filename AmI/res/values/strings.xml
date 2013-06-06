@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Am I</string>
+    <string name="action_settings">Settings</string>
+    <string name="username">Username</string>
+    <string name="confirm">Confirm</string>
+    <string name="create_player">Create</string>
+    <string name="your_photo">Your Photo</string>
+    <string name="create_game">Create game</string>
+    <string name="join_game">Join game</string>
+    <string name="my_profile">My profile</string>
+    <string name="game_name">Game name</string>
+    <string name="password">Password</string>
+    <string name="start">Start</string>
+    <string name="type_char_name">Type character name</string>
+    <string name="look_for_peers">Looking for peers</string>
+    <string name="search_games">Search games</string>
+    <string name="joined_players">Joined players</string>
+
+    <string-array name="characters_array">
+        <item>Chuck Norris</item>
+        <item>Rysiek z Klanu</item>
+        <item>Jas Fasola</item>
+        <item>Kapitan Bomba</item>
+        <item>Andrzej Golota</item>
+        <item>Doda</item>
+        <item>Typowy Seba</item>
+    </string-array>
+    <string-array name="questions_array">
+        <item>Is my sex female?</item>
+        <item>Am i from cartoon?</item>
+        <item>Am I Polish?</item>
+        <item>Do I have dark hair?</item>
+        <item>Do I drink a lot</item>
+        <item>Do I like fishing</item>
+        <item>Can I do magic tricks?</item>
+    </string-array>
+
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="history">History</string>
+
+</resources>
