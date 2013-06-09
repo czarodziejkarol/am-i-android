@@ -14,11 +14,14 @@
         android:layout_marginTop="16dp"
         android:hint="@string/username" >
     </EditText>
+
     <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageViewPlayerIcon" android:src="@drawable/default_icon"
-            android:contentDescription="@string/your_photo"/>
+        android:id="@+id/imageViewPlayerIcon"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/your_photo"
+        android:src="@drawable/playerdefault_icon" />
+
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
