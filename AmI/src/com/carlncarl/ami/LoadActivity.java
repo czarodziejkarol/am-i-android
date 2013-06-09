@@ -61,7 +61,17 @@ public class LoadActivity extends FragmentActivity {
                 startActivity(intent);
 			}
 		});
-
+Button buttona = (Button) findViewById(R.id.buttonMyProfile);
+        
+        buttona.setOnClickListener(new View.OnClickListener() {
+				
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getBaseContext(),TabHostActivity.class);
+                
+                startActivity(intent);
+			}
+		});
 		new LoadingTask().execute("");
 	}
 //
