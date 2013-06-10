@@ -97,11 +97,11 @@ public class GameActivity extends Activity implements
 	@Override
 	protected void onStop() {
 		active = false;
-		if (serviceConnected) {
-			unbindService(sConn);
-			stopService(new Intent(this, GameService.class));
-			serviceConnected = false;
-		}
+//		if (serviceConnected) {
+//			unbindService(sConn);
+//			stopService(new Intent(this, GameService.class));
+//			serviceConnected = false;
+//		}
 		super.onStop();
 	}
 

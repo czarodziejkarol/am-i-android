@@ -33,6 +33,7 @@ import com.carlncarl.ami.game.ServerCommunication;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameService extends Service implements PeerListListener,ConnectionInfoListener {
+	public static final String EXTRA_GAME = "game_extra";
 	private GameActivity gameActivity;
 	private Game game;
 
@@ -58,6 +59,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		
 
 	}
+	
 	
 	public void initialize(GameActivity gameActivity, Game game2){
 		this.gameActivity = gameActivity;
@@ -373,6 +375,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 	public void startGame() {
 		Intent dialogIntent = new Intent(getBaseContext(), TabHostActivity.class);
 		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		//dialogIntent.putExtra(EXTRA_GAME, game);
 		getApplication().startActivity(dialogIntent);
 	}
 }
