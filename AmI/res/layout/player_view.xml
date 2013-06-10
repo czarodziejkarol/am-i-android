@@ -10,6 +10,6 @@
         android:layout_height="wrap_content"
         android:background="@drawable/ramka_zdj"
         android:padding="9dp"
-        android:src="@drawable/playerdefault_icon" />
+        android:src="@drawable/default_icon" />
 
 </LinearLayout>
