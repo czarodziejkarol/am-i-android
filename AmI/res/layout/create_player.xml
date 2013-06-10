@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
             android:contentDescription="@string/your_photo"
-            android:src="@drawable/playerdefault_icon" />
+            android:src="@drawable/default_icon" />
 
         <ImageButton
             android:id="@+id/buttonCamera"
