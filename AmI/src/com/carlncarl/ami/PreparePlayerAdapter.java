@@ -2,6 +2,7 @@ package com.carlncarl.ami;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -16,14 +17,14 @@ import android.widget.TextView;
 
 import com.carlncarl.ami.game.Player;
 
-public class DevicesAdapter extends ArrayAdapter<Player> {
+public class PreparePlayerAdapter extends ArrayAdapter<Player> {
 	private final Context context;
-	private final ArrayList<Player> values;
+	private final LinkedList<Player> values;
 
-	public DevicesAdapter(Context context, ArrayList<Player> values) {
-		super(context, R.layout.player_joined, values);
+	public PreparePlayerAdapter(Context context, LinkedList<Player> players) {
+		super(context, R.layout.player_joined, players);
 		this.context = context;
-		this.values = values;
+		this.values = players;
 	}
 
 	@Override
@@ -40,6 +41,7 @@ public class DevicesAdapter extends ArrayAdapter<Player> {
 
 		Button buttonConnect = (Button) rowView
 				.findViewById(R.id.button_connect);
+		buttonConnect.setVisibility(View.GONE);
 
 		final Player p = values.get(position);
 
@@ -54,27 +56,13 @@ public class DevicesAdapter extends ArrayAdapter<Player> {
 		ProgressBar barConnecting = (ProgressBar) rowView
 				.findViewById(R.id.progress_bar_p_conn);
 
-		if (p.getStatus().equals(Player.STATUS_PEER)
-				|| p.getStatus().equals(Player.STATUS_NOT_CONNECTED)) {
-			buttonConnect.setVisibility(View.VISIBLE);
-		} else {
-			buttonConnect.setVisibility(View.GONE);
-			if (p.getStatus().equals(Player.STATUS_CONNECTING)) {
-				barConnecting.setVisibility(View.VISIBLE);
-			} else {
-				barConnecting.setVisibility(View.GONE);
-			}
-		}
+		barConnecting.setVisibility(View.GONE);
+
 		textViewPlayerName.setText(p.getName());
 		textViewPlayerStatus.setText(p.getStatus());
+		
+		imageViewPlayerImage.setImageResource(R.drawable.default_icon);
 
-		if (p.getImage().equals(Player.DEFAULT_PHOTO)) {
-			imageViewPlayerImage.setImageResource(R.drawable.default_icon);
-		} else {
-			File fp = context.getFileStreamPath(p.getImage());
-			
-			imageViewPlayerImage.setImageDrawable(Drawable.createFromPath(fp.toString()));
-		}
 		return rowView;
 	}
 
