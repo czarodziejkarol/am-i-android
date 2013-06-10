@@ -12,12 +12,12 @@ import android.widget.TextView;
 
 import com.carlncarl.ami.game.Player;
 
-public class DevicesAdapter extends ArrayAdapter<Player> {
+public class PlayerAdapter extends ArrayAdapter<Player> {
 	private final Context context;
 	private final ArrayList<Player> values;
 
-	public DevicesAdapter(Context context, ArrayList<Player> values) {
-		super(context, R.layout.player_joined, values);
+	public PlayerAdapter(Context context, ArrayList<Player> values) {
+		super(context, R.layout.player_view, values);
 		this.context = context;
 		this.values = values;
 	}
@@ -26,7 +26,7 @@ public class DevicesAdapter extends ArrayAdapter<Player> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 		        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.player_joined, parent, false);
+		View rowView = inflater.inflate(R.layout.player_view, parent, false);
 		TextView textViewPlayerName = (TextView) rowView.findViewById(R.id.textViewPlayerName);
 		TextView textViewPlayerStatus = (TextView) rowView.findViewById(R.id.textViewPlayerStatus);
 		ImageView imageViewPlayerImage = (ImageView) rowView.findViewById(R.id.imageViewPlayerImage);
