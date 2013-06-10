@@ -28,7 +28,7 @@ public class Tab1Fragment extends Fragment  {
 	private PlayerAdapter adapter;
 
 	
-	
+	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         if (container == null) {
@@ -41,12 +41,15 @@ public class Tab1Fragment extends Fragment  {
             // the view hierarchy; it would just never be used.
             return null;
         }
-        return (LinearLayout)inflater.inflate(R.layout.gameplay_tab1, container, false);
+       
+        
+
+		
+		 return (LinearLayout)inflater.inflate(R.layout.gameplay_tab1, container, false);
     }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-    	
-    	super.onCreate(savedInstanceState);
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
     	Button buttonGameplayYes = (Button) getView().findViewById(R.id.button_yes);
 		buttonGameplayYes.setOnClickListener(new View.OnClickListener() {
 
@@ -78,8 +81,9 @@ public class Tab1Fragment extends Fragment  {
 
 			
 		});
-    
-    }
+		super.onActivityCreated(savedInstanceState);
+	}
+
     private void answerYes() {
 		// TODO Auto-generated method stub
 		
