@@ -42,16 +42,12 @@
         </service>
 
         <activity
-            android:name="com.carlncarl.ami.TestActivity"
-            android:label="@string/title_activity_test" >
-        </activity>
-        <activity
             android:name="com.carlncarl.ami.TabHostActivity"
             android:label="@string/title_activity_tabhost" >
         </activity>
         <activity
-            android:name="com.carlncarl.ami.GameplayTabActivity"
-            android:label="@string/title_activity_gameplay_tab" >
+            android:name="com.carlncarl.ami.PrepareGameActivity"
+            android:label="@string/title_activity_prepare_game" >
         </activity>
     </application>
 

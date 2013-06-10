@@ -7,6 +7,7 @@ import com.carlncarl.ami.db.Database;
 
 import android.database.Cursor;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.util.Log;
 
 
 public class Player implements Serializable, Runnable{
@@ -14,9 +15,10 @@ public class Player implements Serializable, Runnable{
     public static final String KEY = "player";
     
     public static final String STATUS_PEER = "found peer";
-    public static final String STATUS_CONNECTED = "connected";
-    public static final String STATUS_ACCEPTER = "accepted";
+    public static final String STATUS_CONNECTING = "connecting";
+    public static final String STATUS_ACCEPTED = "accepted";
 	public static final String STATUS_NOT_CONNECTED = "not connected";
+	public static final String IN_GAME = "choosing character";
     
     private WifiP2pDevice device;
     private String uuid;
@@ -28,6 +30,8 @@ public class Player implements Serializable, Runnable{
 	private Socket socket;
 	private PlayerCommunication commun;
 	private String deviceMAC;
+	private String typedCharacter;
+	private String character;
 	
 	public Player(Cursor c){
 		//device.
@@ -56,6 +60,14 @@ public class Player implements Serializable, Runnable{
 		this.image = DEFAULT_PHOTO;
 		this.name = device.deviceName;
 		this.device = device;
+	}
+
+	public Player(Communicat com) {
+		this.status = IN_GAME;
+		this.image = com.getImage();
+		this.name = com.getPlayerName();
+		this.uuid = com.getPlayerUUID();
+		this.deviceMAC = com.getVal();
 	}
 
 	public String getUuid() {
@@ -140,6 +152,23 @@ public class Player implements Serializable, Runnable{
 	}
 
 	public void setDeviceMAC(String deviceMAC) {
+		Log.d("MOJ COS", deviceMAC);
 		this.deviceMAC = deviceMAC;
+	}
+
+	public String getTypedCharacter() {
+		return typedCharacter;
+	}
+
+	public void setTypedCharacter(String typedCharacter) {
+		this.typedCharacter = typedCharacter;
+	}
+
+	public String getCharacter() {
+		return character;
+	}
+
+	public void setCharacter(String character) {
+		this.character = character;
 	}
 }

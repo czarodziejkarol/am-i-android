@@ -5,6 +5,12 @@
     android:background="@drawable/pure_background"
     android:orientation="vertical" >
 
+    <Button
+        android:id="@+id/button_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
     <LinearLayout
         android:id="@+id/viewSearchGames"
         android:layout_width="match_parent"
@@ -19,8 +25,9 @@
             android:layout_gravity="center"
             android:background="@drawable/button"
             android:singleLine="false"
+            android:textColor="#FFFFFF"
             android:text="@string/search_games"
-            android:textColor="#FFFFFF" />
+             />
 
     </LinearLayout>
 
@@ -36,21 +43,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:ems="10"
+                android:visibility="gone"
                 android:id="@+id/editTextGameName" android:hint="@string/game_name"/>
-        <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/editTextGamePassword" android:hint="@string/password"/>
-        <AutoCompleteTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:ems="10"
-                android:id="@+id/autoCompleteTextViewChooseCharacter"
-                android:hint="@string/type_char_name"/>
 
         <Button
             android:id="@+id/buttonStart"
@@ -71,8 +65,39 @@
         android:orientation="vertical"
         android:visibility="invisible" >
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/imageViewMe"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/default_icon" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewMyDevice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/my_device" />
+
+                <TextView
+                    android:id="@+id/textViewMyDevName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
         <ProgressBar
-            android:id="@+id/progressBar1"
+            android:id="@+id/progress_bar_p_conn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
@@ -91,6 +116,21 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/listViewJoinedPlayers" android:layout_gravity="center"/>
 
+        <Button
+            android:id="@+id/button_prepare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/button"
+            android:singleLine="false"
+            android:textColor="#FFFFFF"
+            android:text="@string/confirm" />
+
     </LinearLayout>
+
+    <include
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/prepare_game" />
 
 </LinearLayout>

@@ -79,11 +79,11 @@ public class CreateUserDialogFragment extends DialogFragment {
 
                     Bitmap photo = (Bitmap) data.getExtras().get("data");
 
-                    fileName = new Date().getTime()+".png";
+                    fileName = new Date().getTime()+".jpg";
                     FileOutputStream fos = null;
                     try {
                         fos = activity.openFileOutput(fileName, Context.MODE_PRIVATE);
-                        photo.compress(Bitmap.CompressFormat.PNG,10,fos);
+                        photo.compress(Bitmap.CompressFormat.JPEG,10,fos);
                         fos.flush();
                         fos.close();
                     } catch (Exception e) {

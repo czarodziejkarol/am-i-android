@@ -1,25 +1,18 @@
 package com.carlncarl.ami;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
+import java.io.File;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.wifi.WifiManager;
+import android.graphics.drawable.Drawable;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.ActionListener;
-import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -30,7 +23,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.carlncarl.ami.db.Database;
@@ -41,52 +36,29 @@ import com.carlncarl.ami.game.Player;
 /**
  * Created by Karol on 20.05.13.
  */
-public class GameActivity extends Activity implements PeerListListener,
+public class GameActivity extends Activity implements
 		WifiP2pManager.ChannelListener,
 		CreateGameListFragment.DeviceActionListener {
 
 	public static final String PLAYER_KEY = "player";
 	public static final String IS_SERVER = "server_in";
-	// private GameService gameService;
-	// private Boolean gameServiceConnected = Boolean.FALSE;
-	//
-	// private ServiceConnection sConnection = new ServiceConnection() {
-	// @Override
-	// public void onServiceConnected(ComponentName componentName, IBinder
-	// iBinder) {
-	// gameService = ((GameService.GameBinder) iBinder).getService();
-	// gameServiceConnected = Boolean.TRUE;
-	// }
-	//
-	// @Override
-	// public void onServiceDisconnected(ComponentName componentName) {
-	// gameService = null;
-	// gameServiceConnected = Boolean.FALSE;
-	// }
-	// };
-	
+
+	static boolean active = false;
+
 	private Player player;
 	private EditText editGameName;
-	private EditText editGamePassword;
 	private Button buttonStartGame;
 	private AutoCompleteTextView characterText;
-	private int step = 0;
-	private Boolean server = false;
-	private WifiManager wifiManager;
 
-	WifiP2pManager mManager;
-	WifiP2pManager.Channel mChannel;
-	BroadcastReceiver mReceiver;
-
-	IntentFilter mIntentFilter;
-	private boolean wiFiEnabled = false;
 	private ListView listViewJoinedPlayers;
 
 	private DevicesAdapter adapter;
+	private PreparePlayerAdapter preAdapter;
 
 	private View viewSearchGames;
 	private View viewCreateGame;
 	private View viewJoinedPlayers;
+	private View viewPrepare;
 
 	private GameService gService = null;
 	private boolean serviceConnected = false;
@@ -102,24 +74,29 @@ public class GameActivity extends Activity implements PeerListListener,
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			gService = ((GameService.GameBinder) service).getService();
-			
-			gService.setActivity(GameActivity.this);
-			gService.setGame(game);
+			gService.initialize(GameActivity.this, game);
+			// gService.setActivity(GameActivity.this);
+			// gService.setGame(game);
+			//
 			serviceConnected = true;
 		}
 	};
 
 	@Override
 	protected void onStart() {
+		active = true;
 		super.onStart();
 
 		bindService(new Intent(this, GameService.class), sConn,
 				Context.BIND_AUTO_CREATE);
-		startService(new Intent(this, GameService.class));
+		Intent intent = new Intent(this, GameService.class);
+
+		startService(intent);
 	}
 
 	@Override
 	protected void onStop() {
+		active = false;
 		if (serviceConnected) {
 			unbindService(sConn);
 			stopService(new Intent(this, GameService.class));
@@ -138,6 +115,7 @@ public class GameActivity extends Activity implements PeerListListener,
 	// // }
 	// }
 	Game game;
+	private ListView listViewPrepare;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -148,7 +126,7 @@ public class GameActivity extends Activity implements PeerListListener,
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			this.player = (Player) extras.getSerializable(PLAYER_KEY);
-			this.server = extras.getBoolean(GameActivity.IS_SERVER);
+			game.setServer(extras.getBoolean(GameActivity.IS_SERVER));
 		}
 		game.setMe(player);
 
@@ -158,10 +136,12 @@ public class GameActivity extends Activity implements PeerListListener,
 		setContentView(R.layout.game);
 		editGameName = (EditText) findViewById(R.id.editTextGameName);
 		listViewJoinedPlayers = (ListView) findViewById(R.id.listViewJoinedPlayers);
-		adapter = new DevicesAdapter(this, game.getPlayers());
+		adapter = new DevicesAdapter(this, game.getPlayersSet());
 		listViewJoinedPlayers.setAdapter(adapter);
 
-		editGamePassword = (EditText) findViewById(R.id.editTextGamePassword);
+		listViewPrepare = (ListView) findViewById(R.id.listViewPrepare);
+		preAdapter = new PreparePlayerAdapter(this, Game.players);
+		listViewPrepare.setAdapter(preAdapter);
 		characterText = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextViewChooseCharacter);
 		new LoadCharactersTask().execute(new Object[0]);
 		buttonStartGame = (Button) findViewById(R.id.buttonStart);
@@ -181,14 +161,46 @@ public class GameActivity extends Activity implements PeerListListener,
 			}
 		});
 
+		Button prepareButton= (Button) findViewById(R.id.button_prepare);
+		prepareButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startPrepareGame();
+			}
+		});
+		
+		Button selectButton = (Button) findViewById(R.id.buttonSelectCharacter);
+		selectButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				chooseCharacter();
+				
+			}
+		});
 		
 		
+		// TEST
+		Button test = (Button) findViewById(R.id.button_test);
+		test.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				gService.hideSth();
+
+			}
+		});
+
 		getWindow().addFlags(Window.FEATURE_NO_TITLE);
 
+		
+		viewPrepare =  (View) findViewById(R.id.viewPrepare);
+		viewPrepare.setVisibility(View.INVISIBLE);
 		viewSearchGames = (View) findViewById(R.id.viewSearchGames);
 		viewCreateGame = (View) findViewById(R.id.viewCreateGame);
 		viewJoinedPlayers = (View) findViewById(R.id.viewJoinigPlayers);
-		if (this.server) {
+		if (game.isServer()) {
 			viewCreateGame.setVisibility(View.VISIBLE);
 			viewSearchGames.setVisibility(View.INVISIBLE);
 		} else {
@@ -196,128 +208,68 @@ public class GameActivity extends Activity implements PeerListListener,
 			viewSearchGames.setVisibility(View.VISIBLE);
 		}
 
-		wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-
-		mIntentFilter = new IntentFilter();
-		mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-		mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-		mIntentFilter
-				.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-		mIntentFilter
-				.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-		mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-		mChannel = mManager.initialize(this, getMainLooper(), null);
-		mReceiver = new WiFiBroadcastReceiver(mManager, mChannel, this);
-
 	}
 
-	/* register the broadcast receiver with the intent values to be matched */
-	@Override
-	protected void onResume() {
-		super.onResume();
-		registerReceiver(mReceiver, mIntentFilter);
-	}
-
-	/* unregister the broadcast receiver */
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(mReceiver);
-	}
-
-	private void joinGame() {
-		gService.getGame().getMe().setDeviceMAC(
-				wifiManager.getConnectionInfo().getMacAddress());
-		if (!wifiManager.isWifiEnabled()) {
-			wifiManager.setWifiEnabled(true);
-			do {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} while (!wifiManager.isWifiEnabled());
+	protected void chooseCharacter() {
+		if(characterText.getText()!= null && 
+				!characterText.getText().toString().equals("")){
+			gService.chooseCharacter(characterText.getText().toString());
+		} else {
+			Toast.makeText(this, "Choose character name!", Toast.LENGTH_SHORT).show();
 		}
-
-		searchPeers();
+			
 	}
 
-	private void createGame() {
-		gService.getGame().setName(editGameName.getText().toString());
-		gService.getGame().setOwner(this.player);
-		gService.getGame().setStart(new Date());
-		gService.getGame().setPassword(editGamePassword.getText().toString());
-		if (!wifiManager.isWifiEnabled()) {
-			wifiManager.setWifiEnabled(true);
-			do {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} while (!wifiManager.isWifiEnabled());
-		}
-		searchPeers();
-
-		// gameService.createGame(game);
-		/*
-		 * WifiManager manager = (WifiManager)
-		 * getSystemService(Context.WIFI_SERVICE); if(manager.isWifiEnabled()){
-		 * manager.setWifiEnabled(false); } WifiApManager apManager = new
-		 * WifiApManager(this); WifiConfiguration wc = new WifiConfiguration();
-		 * wc.SSID = editGameName.getText().toString(); wc.preSharedKey =
-		 * "\""+editGamePassword.getText().toString()+"\"";
-		 * wc.wepKeys[0]="\""+editGamePassword.getText().toString()+"\"";
-		 * wc.hiddenSSID = false; wc.status = WifiConfiguration.Status.ENABLED;
-		 * wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-		 * wc.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-		 * wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-		 * wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-		 * wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-		 * wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-		 * wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-		 * apManager.setWifiApEnabled(wc, true); //manager.
-		 */
+	protected void startPrepareGame() {
+		gService.sendPrePrepare();
 	}
 
+	protected void joinGame() {
+		gService.joinGame();
+	}
 
-	private void searchPeers() {
-		mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-
+	protected void createGame() {
+		gService.createGame(editGameName.getText().toString(), player);
+	}
+	
+	public void prepareGame(){
+		this.runOnUiThread(new Runnable() {
+			
 			@Override
-			public void onSuccess() {
-				Toast.makeText(GameActivity.this,
-						getResources().getString(R.string.look_for_peers),
-						Toast.LENGTH_SHORT).show();
-				hideViewCreateGame();
-			}
-
-			@Override
-			public void onFailure(int reasonCode) {
-				// Toast.makeText(GameActivity.this, "Discovery Failed : " +
-				// reasonCode,
-				// Toast.LENGTH_SHORT).show();
-				searchPeers();
+			public void run() {
+				// TODO Auto-generated method stub
+				viewJoinedPlayers.setVisibility(View.GONE);
+				viewPrepare.setVisibility(View.VISIBLE);
+				preAdapter.notifyDataSetChanged();
 			}
 		});
+		
 	}
 
 	protected void hideViewCreateGame() {
-		viewCreateGame.setVisibility(View.GONE);
-		viewSearchGames.setVisibility(View.GONE);
-		viewJoinedPlayers.setVisibility(View.VISIBLE);
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				viewCreateGame.setVisibility(View.GONE);
+				viewSearchGames.setVisibility(View.GONE);
+				viewJoinedPlayers.setVisibility(View.VISIBLE);
+				if(!GameActivity.this.player.getImage().equals(Player.DEFAULT_PHOTO)){
+					ImageView imv = (ImageView) findViewById(R.id.imageViewMe);
+					
+					File fp =GameActivity.this.getFileStreamPath(GameActivity.this.player.getImage());
+							
+					imv.setImageDrawable(Drawable.createFromPath(fp.toString()));
+				}
+				
+			}
+		});
+
 	}
 
 	@Override
 	public void onChannelDisconnected() {
 
-	}
-
-	public void setWiFiEnabled(boolean enabled) {
-		this.wiFiEnabled = enabled;
 	}
 
 	@Override
@@ -378,80 +330,6 @@ public class GameActivity extends Activity implements PeerListListener,
 		}
 	}
 
-	@Override
-	public void onPeersAvailable(WifiP2pDeviceList peers) {
-		Collection<WifiP2pDevice> peerList = peers.getDeviceList();
-		Game game = gService.getGame();
-		for (WifiP2pDevice device : peerList) {
-			boolean isIn = false;
-			for (Player player : game.getPlayers()) {
-				if (player.getDevice().deviceAddress
-						.equals(player.getDevice().deviceAddress)) {
-					isIn = true;
-					break;
-				}
-			}
-			if (!isIn) {
-				Player p = new Player(device);
-				game.addPlayer(p);
-			}
-		}
-		ArrayList<Player> toDel = new ArrayList<Player>();
-		for (Player player : game.getPlayers()) {
-			// boolean isIn = false;
-			if (player.getDevice().status == WifiP2pDevice.UNAVAILABLE) {
-				toDel.add(player);
-			}
-			// for (WifiP2pDevice wifiP2pDevice : peerList) {
-			// if(isIn)
-			// }
-		}
-		game.removeAllPlayers(toDel);
-		adapter.notifyDataSetChanged();
-		connect();
-	}
-
-	public void connect() {
-		if (server) {
-			Game game = gService.getGame();
-			for (final Player player : game.getPlayers()) {
-				if (player.getStatus().equals(Player.STATUS_PEER)) {
-					WifiP2pConfig config = new WifiP2pConfig();
-					config.deviceAddress = player.getDevice().deviceAddress;
-
-					mManager.connect(mChannel, config, new ActionListener() {
-
-						@Override
-						public void onSuccess() {
-							player.setStatus(Player.STATUS_CONNECTED);
-							// mManager.
-							// mManager.
-							verifyClient(player);
-						}
-
-						@Override
-						public void onFailure(int reason) {
-							player.setStatus(Player.STATUS_NOT_CONNECTED);
-						}
-					});
-				}
-			}
-		}
-	}
-
-	protected void verifyClient(Player player) {
-		// open server socket
-
-	}
-
-	public Boolean getServer() {
-		return server;
-	}
-
-	public void setServer(Boolean server) {
-		this.server = server;
-	}
-
 	public DevicesAdapter getAdapter() {
 		return adapter;
 	}
@@ -466,6 +344,51 @@ public class GameActivity extends Activity implements PeerListListener,
 
 	public void setGService(GameService gService) {
 		this.gService = gService;
+	}
+
+	public void hideTestButton() {
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				Button test = (Button) findViewById(R.id.button_test);
+				test.setVisibility(View.GONE);
+			}
+		});
+
+	}
+
+	public void notifyAdapter() {
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				adapter.notifyDataSetChanged();
+				
+			}
+		});
+
+	}
+
+	public void setMyDevName(final String devName) {
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				TextView textMyDevName = (TextView) findViewById(R.id.textViewMyDevName);
+				textMyDevName.setText(devName);
+			}
+		});
+	}
+
+	public void notifyPreAdapter() {
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				preAdapter.notifyDataSetChanged();
+			}
+		});
 	}
 
 }
