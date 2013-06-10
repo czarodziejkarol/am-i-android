@@ -33,7 +33,7 @@ public class DevicesAdapter extends ArrayAdapter<Player> {
 		
 		textViewPlayerName.setText(values.get(position).getName());
 		textViewPlayerStatus.setText(values.get(position).getStatus());
-		imageViewPlayerImage.setImageResource(R.drawable.playerdefault_icon);
+		imageViewPlayerImage.setImageResource(R.drawable.default_icon);
 		
 		return rowView;
 	}
