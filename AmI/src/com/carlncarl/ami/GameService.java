@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,7 +21,6 @@ import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.widget.Toast;
 
@@ -31,10 +29,10 @@ import com.carlncarl.ami.game.Game;
 import com.carlncarl.ami.game.Player;
 import com.carlncarl.ami.game.ServerCommunication;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameService extends Service implements PeerListListener,ConnectionInfoListener {
 	public static final String EXTRA_GAME = "game_extra";
 	private GameActivity gameActivity;
+	private TabHostActivity playActivity;
 	private Game game;
 
 	private WifiManager wifiManager;
@@ -377,5 +375,21 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		//dialogIntent.putExtra(EXTRA_GAME, game);
 		getApplication().startActivity(dialogIntent);
+	}
+
+	public TabHostActivity getPlayActivity() {
+		return playActivity;
+	}
+
+	public void setPlayActivity(TabHostActivity playActivity) {
+		this.playActivity = playActivity;
+	}
+
+	public void startTurn(Player player) {
+		playActivity.startNewTurn(player);
+	}
+
+	public void receveQuestion(Player p, String question) {
+		playActivity.receiveQuestion(p, question);
 	}
 }

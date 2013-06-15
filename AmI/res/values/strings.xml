@@ -48,5 +48,6 @@
     <string name="my_device">My device</string>
     <string name="title_activity_prepare_game">PrepareGameActivity</string>
     <string name="select">Select</string>
+    <string name="exit">Exit</string>
 
 </resources>

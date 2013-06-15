@@ -7,17 +7,32 @@
     android:orientation="vertical" >
 
     <GridLayout
+        android:id="@+id/answerGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginRight="5dp"
         android:columnCount="2"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:rowCount="2" >
+
+        <ListView
+            android:id="@+id/playerlistView"
+            android:layout_width="94dp"
+            android:layout_height="390dp"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="0" >
+        </ListView>
 
         <LinearLayout
+            android:id="@+id/answerButtonsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_column="0"
-            android:layout_gravity="left|bottom"
-            android:layout_row="0"
+            android:layout_columnSpan="2"
+            android:layout_gravity="top"
+            android:layout_marginTop="7dp"
+            android:layout_row="1"
             android:orientation="horizontal" >
 
             <Button
@@ -41,18 +56,63 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:background="@drawable/button_no" />
-
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/playerlistView"
-            android:layout_width="89dp"
-            android:layout_height="325dp"
-            android:layout_column="0"
-            android:layout_gravity="left|center_vertical"
-            android:layout_row="0" >
-        </ListView>
+        <LinearLayout
+            android:layout_width="206dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="fill_horizontal|top"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="0"
+            android:background="@drawable/text_panel_gameplay"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:id="@+id/textViewAsker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="sad"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <ScrollView
+                android:id="@+id/scrollView1"
+                android:layout_width="match_parent"
+                android:layout_height="294dp"
+                android:layout_weight="0.54" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/textViewAskedQuestion"
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent"
+                        android:text="Medium Text"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
 
     </GridLayout>
+
+    <include
+        android:id="@+id/questionLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/question_layout" />
+
+    <include
+        android:id="@+id/waitingLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/waiting_layout" />
 
 </LinearLayout>

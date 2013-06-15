@@ -44,10 +44,10 @@ public class Player implements Serializable, Runnable{
 
 	}
 
-    public Player(String myUUID, String param,String param2) {
+    public Player(String myUUID, String name,String image) {
         this.uuid = myUUID;
-        this.name = param;
-        this.image = param2;
+        this.name = name;
+        this.image = image;
         this.auto_add = true;
         this.me = true;
 

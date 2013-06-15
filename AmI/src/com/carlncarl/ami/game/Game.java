@@ -11,6 +11,7 @@ import java.util.LinkedList;
 
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import com.carlncarl.ami.GameActivity;
@@ -28,6 +29,11 @@ public class Game implements Serializable {
 	public static final int MESSAGE_PLAYER_DATA = 2;
 	public static final int MESSAGE_TYPE = 3;
 
+	public static final int ANSWER_YES = 1;
+	public static final int ANSWER_NO = 0;
+	public static final int ANSWER_DONT_KNOW = 3;
+	
+	
 	public static int GAME_PORT = 8888;
 
 	private LinkedList<Communicat> inCommunicats = new LinkedList<Communicat>();
@@ -40,8 +46,16 @@ public class Game implements Serializable {
 	private Player owner;
 	private Player me;
 	private ArrayList<Player> playersSet;
-
+	private ArrayList<String> myQuestions = new ArrayList<String>();
+	
+	
 	public static LinkedList<Player> players = new LinkedList<Player>();
+	
+	//playerzy testowi
+	public static LinkedList<Player> players_test = new LinkedList<Player>();
+
+	
+	
 
 	private ServerSocket serverSocket = null;
 	private ServerCommunication serCommunication = null;
@@ -55,6 +69,15 @@ public class Game implements Serializable {
 	private GameService gameService;
 
 	public Game(GameActivity activity) {
+		
+		Game.players_test = new LinkedList<Player>();
+		Player p = new Player("1231233-321321-1", "Karol", "cza");
+		players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol", "cza");
+		players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol", "cza");
+		players_test.addFirst(p);
+		
 		this.activity = activity;
 		playersSet = new ArrayList<Player>();
 		finished = false;
@@ -193,55 +216,140 @@ public class Game implements Serializable {
 			}
 			break;
 		case Communicat.TYPE_PLAYER:
-			Player p = new Player(com);
-			players.add(p);
-
+			typePlayer(com);
 			break;
 
 		case Communicat.TYPE_GAME_STATUS:
-
-			if (com.getVal().equals(Communicat.CHOOSE_CHARACTER)) {
-				gameService.chooseCharacter();
-
-			} else if(com.getVal().equals(Communicat.STATUS_START)){
-				gameService.startGame();
-			}
+			checkGameStatus(com);
 			break;
 
 		case Communicat.TYPE_TYPE_CHARACTER:
-			for (Player player : players) {
-				if (player.getUuid().equals(com.getPlayerUUID())) {
-					player.setTypedCharacter(com.getVal());
-					break;
-				}
-			}
-			boolean allSet = true;
-			for (Player player : players) {
-				if (player.getTypedCharacter() == null) {
-					allSet = false;
-					break;
-				}
-			}
-
-			if (allSet) {
-				// losowanie
-				drawCharacters();
-			}
+			checkTypeCharacter(com);
 			break;
 
 		case Communicat.TYPE_DRAWED_CHARACTER:
-			for (Player player : players) {
-				if (player.getUuid().equals(com.getPlayerUUID())) {
-					player.setCharacter(com.getVal());
-					break;
-				}
-			}
+			drawedCharacter(com);
 			break;
-		
+		case Communicat.TYPE_TURN:
+			startNewTurn(com);
+			break;
+			
+		case Communicat.TYPE_QUESTION_ASKED:
+			sendQuestion(com);
+			break;
+		case Communicat.TYPE_QUESTION:
+			receiveQuestion(com);
+			break;
+		case Communicat.TYPE_ANSWER_SERVER:
+			sendAnswer(com);
+			break;
+		case Communicat.TYPE_ANSWER:
+			receiveAnswer(com);
+			break;
 		default:
 			break;
 		}
 		return null;
+	}
+
+	private void receiveAnswer(Communicat com) {
+		//przes³anie do activity otrzymania odpowiedzi
+		
+	}
+
+	int answers = 0;
+	
+	private void sendAnswer(Communicat com) {
+		Communicat sCom = new Communicat();
+		sCom.setType(Communicat.TYPE_ANSWER);
+		sCom.setVal(com.getVal());
+		sCom.setPlayerUUID(com.getPlayerUUID());
+		sendCommunicat(sCom);
+		answers++;
+		if(answers==Game.players.size()-1){
+			endTurn();
+		}
+		
+		
+	}
+
+	private void receiveQuestion(Communicat com) {
+		answers = 0;
+		String question = com.getVal();
+		Player p = getPlayerByUUID(com.getPlayerUUID());
+		gameService.receveQuestion(p,question);
+	}
+
+	private void sendQuestion(Communicat com) {
+		Communicat sCom = new Communicat();
+		sCom.setType(Communicat.TYPE_QUESTION);
+		sCom.setVal(com.getVal());
+		sCom.setPlayerUUID(com.getPlayerUUID());
+		sendCommunicat(sCom);
+	}
+
+	private void startNewTurn(Communicat com) {
+		//szukanie playera z uuid
+		for (Player player : Game.players) {
+			if(player.getUuid().equals(com.getPlayerUUID())){
+				gameService.startTurn(player);
+				break;
+			}
+		}
+		
+	}
+	
+	public Player getPlayerByUUID(String uuid){
+		for (Player player : Game.players) {
+			if(player.getUuid().equals(uuid)){
+				return player;
+			}
+		}
+		return null;
+	}
+
+	private void typePlayer(Communicat com) {
+		Player p = new Player(com);
+		players.add(p);
+	}
+
+	private void checkGameStatus(Communicat com) {
+		if (com.getVal().equals(Communicat.CHOOSE_CHARACTER)) {
+			gameService.chooseCharacter();
+
+		} else if(com.getVal().equals(Communicat.STATUS_START)){
+			gameService.startGame();
+		}
+	}
+
+	private void drawedCharacter(Communicat com) {
+		for (Player player : players) {
+			if (player.getUuid().equals(com.getPlayerUUID())) {
+				player.setCharacter(com.getVal());
+				break;
+			}
+		}
+	}
+
+	private void checkTypeCharacter(Communicat com) {
+		for (Player player : players) {
+			if (player.getUuid().equals(com.getPlayerUUID())) {
+				player.setTypedCharacter(com.getVal());
+				break;
+			}
+		}
+		boolean allSet = true;
+		for (Player player : players) {
+			if (player.getTypedCharacter() == null) {
+				allSet = false;
+				break;
+			}
+		}
+
+		if (allSet) {
+			// losowanie
+			drawCharacters();
+		}
 	}
 
 	private void drawCharacters() {
@@ -266,6 +374,9 @@ public class Game implements Serializable {
 		com.setType(Communicat.TYPE_GAME_STATUS);
 		com.setVal(Communicat.STATUS_START);
 		sendCommunicat(com);
+		
+		
+		
 
 	}
 
@@ -319,6 +430,25 @@ public class Game implements Serializable {
 			outCommunicats.add(com);
 		}
 
+	}
+	
+	public void startTurn(){
+		Communicat com = new Communicat();
+		com.setType(Communicat.TYPE_TURN);
+		com.setPlayerUUID(Game.players.getFirst().getUuid());
+		sendCommunicat(com);
+	}
+	
+	public void askQuestion(Communicat com){
+		
+	}
+	
+	public void endTurn(){
+		
+		
+		//przejœcie do nastêpnego gracza
+		Game.players.addLast(Game.players.removeFirst());
+		startTurn();
 	}
 
 	public void sendCommunicat(Communicat com) {
@@ -380,7 +510,26 @@ public class Game implements Serializable {
 		} else {
 			serCommunication.sendToServerComm(com);
 		}
+	}
 
+	public ArrayList<String> getMyQuestions() {
+		return myQuestions;
+	}
+
+	public void sendAskedQuestion(String question) {
+		Communicat com = new Communicat();
+		com.setType(Communicat.TYPE_QUESTION_ASKED);
+		com.setVal(question);
+		com.setPlayerUUID(me.getUuid());
+		sendToServerCommunicat(com);
+	}
+
+	public void setAnswerToServer(int answer) {
+		Communicat com = new Communicat();
+		com.setType(Communicat.TYPE_ANSWER_SERVER);
+		com.setVal(Integer.toString(answer));
+		com.setPlayerUUID(me.getUuid());
+		sendToServerCommunicat(com);
 	}
 
 }
