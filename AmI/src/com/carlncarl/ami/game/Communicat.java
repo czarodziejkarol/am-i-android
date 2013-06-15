@@ -16,7 +16,11 @@ public class Communicat {
 	
 	public static final String CHOOSE_CHARACTER = "CHOOSECHAR";
 	public static final String STATUS_START = "START";
-	
+	public static final int TYPE_TURN = 6;
+	public static final int TYPE_QUESTION_ASKED = 7;
+	public static final int TYPE_QUESTION = 8;
+	public static final int TYPE_ANSWER_SERVER = 9;
+	public static final int TYPE_ANSWER = 10;
 
 	private int type;
 	private String playerUUID;

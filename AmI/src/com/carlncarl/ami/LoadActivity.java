@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -92,13 +94,6 @@ Button buttona = (Button) findViewById(R.id.buttonMyProfile);
 		
 	}
 	
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.load, menu);
-		return true;
-	}
 
 	
 	
@@ -186,4 +181,29 @@ Button buttona = (Button) findViewById(R.id.buttonMyProfile);
             }
         }
     }
+    
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.test, menu);
+	    return true;
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.item_exit:
+	            exitGame();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+
+	private void exitGame() {
+		this.stopService(new Intent(this, GameService.class));
+		finish();
+	}
 }

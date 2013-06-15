@@ -12,23 +12,29 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
 
+import com.carlncarl.ami.PlayGameFragment.PlayTabInterface;
 import com.carlncarl.ami.game.Game;
+import com.carlncarl.ami.game.Player;
 
 public class TabHostActivity extends FragmentActivity implements
-		TabHost.OnTabChangeListener {
+		TabHost.OnTabChangeListener, PlayTabInterface {
 	private TabHost mTabHost;
 	private Game game;
 	private HashMap<String, TabInfo> mapTabInfo = new HashMap<String, TabInfo>();
 	private TabInfo mLastTab = null;
 
-	GameService gService;
+	private GameService gService;
 	protected boolean serviceConnected;
+	
 	
 	private ServiceConnection sConn = new ServiceConnection() {
 
@@ -41,6 +47,13 @@ public class TabHostActivity extends FragmentActivity implements
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			gService = ((GameService.GameBinder) service).getService();
+			gService.setPlayActivity(TabHostActivity.this);
+			if(gService.getGame().isServer()){
+				gService.getGame().startTurn();
+			}
+			PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
+			playFragment.setGService(gService);
+			game = gService.getGame();
 			//gService.initialize(GameActivity.this, game);
 			// gService.setActivity(GameActivity.this);
 			// gService.setGame(game);
@@ -150,7 +163,7 @@ public class TabHostActivity extends FragmentActivity implements
 				this.mTabHost.newTabSpec("Tab1").setIndicator(
 						prepareTabView(this,
 								R.drawable.button_panel_corner_left)),
-				(tabInfo = new TabInfo("Tab1", Tab1Fragment.class, args)));
+				(tabInfo = new TabInfo("Tab1", PlayGameFragment.class, args)));
 		this.mapTabInfo.put(tabInfo.tag, tabInfo);
 		TabHostActivity.addTab(
 				this,
@@ -256,5 +269,77 @@ public class TabHostActivity extends FragmentActivity implements
 	public void setGame(Game game) {
 		this.game = game;
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.test, menu);
+	    return true;
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.item_exit:
+	            exitGame();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 
+	private void exitGame() {
+		this.stopService(new Intent(this, GameService.class));
+		finish();
+	}
+
+	public GameService getGService() {
+		return gService;
+	}
+
+	public void setGService(GameService gService) {
+		this.gService = gService;
+	}
+
+	@Override
+	public void onAnswerGiven(int answer) {
+		game.setAnswerToServer(answer);
+	}
+
+	@Override
+	public void onQuestionAsked(String question) {
+		game.sendAskedQuestion(question);
+	}
+
+	@Override
+	public void onTypeMyCharacter(String character) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void startNewTurn(final Player p){
+		this.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
+				playFragment.turnPlayer(p);
+			}
+		});
+	}
+	
+	
+	public void receiveQuestion(final Player p, final String question){
+		this.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
+				playFragment.receivedQuestion(p, question);
+			}
+		});
+	}
+	
 }
