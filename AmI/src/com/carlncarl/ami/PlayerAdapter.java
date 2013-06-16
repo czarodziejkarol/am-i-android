@@ -2,6 +2,8 @@ package com.carlncarl.ami;
 
 import java.util.LinkedList;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +28,14 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 		        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.player_view, parent, false);
+		int viewId ;
+		if(position==0){
+			 viewId = R.layout.player_view;
+		} else {
+			 viewId = R.layout.player_view_mini;
+		}
+		
+		View rowView = inflater.inflate(viewId , parent, false);
 		TextView textViewPlayerName = (TextView) rowView.findViewById(R.id.player_view_name);
 		//TextView textViewPlayerStatus = (TextView) rowView.findViewById(R.id.textViewPlayerStatus);
 		ImageView imageViewPlayerImage = (ImageView) rowView.findViewById(R.id.player_view_image);

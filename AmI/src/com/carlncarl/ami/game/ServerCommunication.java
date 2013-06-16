@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import com.carlncarl.ami.GameService;
 

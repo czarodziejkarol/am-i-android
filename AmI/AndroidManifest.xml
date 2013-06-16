@@ -25,7 +25,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.carlncarl.ami.LoadActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,11 +44,13 @@
 
         <activity
             android:name="com.carlncarl.ami.TabHostActivity"
-            android:label="@string/title_activity_tabhost" >
+            android:label="@string/title_activity_tabhost"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name="com.carlncarl.ami.PrepareGameActivity"
-            android:label="@string/title_activity_prepare_game" >
+            android:label="@string/title_activity_prepare_game"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
     </application>
 

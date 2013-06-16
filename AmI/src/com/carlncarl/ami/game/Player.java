@@ -2,15 +2,18 @@ package com.carlncarl.ami.game;
 
 import java.io.Serializable;
 import java.net.Socket;
-
-import com.carlncarl.ami.db.Database;
+import java.util.LinkedList;
 
 import android.database.Cursor;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.util.Log;
 
+import com.carlncarl.ami.db.Database;
 
-public class Player implements Serializable, Runnable{
+
+public class Player implements Serializable{
+	
+	private static final long serialVersionUID = -5967579089793811451L;
 	public static final String DEFAULT_PHOTO = "default";
     public static final String KEY = "player";
     
@@ -32,6 +35,8 @@ public class Player implements Serializable, Runnable{
 	private String deviceMAC;
 	private String typedCharacter;
 	private String character;
+	private LinkedList<String> questions;
+	
 	
 	public Player(Cursor c){
 		//device.
@@ -68,6 +73,7 @@ public class Player implements Serializable, Runnable{
 		this.name = com.getPlayerName();
 		this.uuid = com.getPlayerUUID();
 		this.deviceMAC = com.getVal();
+		this.questions = new LinkedList<String>();
 	}
 
 	public String getUuid() {
@@ -134,11 +140,6 @@ public class Player implements Serializable, Runnable{
 		this.socket = socket;
 	}
 
-	@Override
-	public void run() {
-		
-	}
-
 	public PlayerCommunication getCommun() {
 		return commun;
 	}
@@ -170,5 +171,13 @@ public class Player implements Serializable, Runnable{
 
 	public void setCharacter(String character) {
 		this.character = character;
+	}
+
+	public LinkedList<String> getQuestions() {
+		return questions;
+	}
+
+	public void setQuestions(LinkedList<String> questions) {
+		this.questions = questions;
 	}
 }
