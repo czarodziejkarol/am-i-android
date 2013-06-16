@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/player_view_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/ramka_zdj_kolejka"
+        android:padding="6dp"
+        android:src="@drawable/default_icon" />
+
+    <TextView
+        android:id="@+id/player_view_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/player_view_image"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/player_view_image"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

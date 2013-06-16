@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gameplay_background"
+    android:background="@drawable/pure_background"
     android:gravity="bottom"
     android:orientation="vertical" >
 
@@ -10,37 +10,44 @@
         android:id="@+id/answerGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="5dp"
+        
         android:columnCount="2"
         android:orientation="horizontal"
         android:rowCount="2" >
 
-        <ListView
-            android:id="@+id/playerlistView"
-            android:layout_width="94dp"
-            android:layout_height="390dp"
-            android:layout_column="0"
-            android:layout_gravity="left|top"
-            android:layout_row="0" >
-        </ListView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_gravity="fill_horizontal"
+            android:orientation="vertical" >
+
+            <com.carlncarl.ami.HorizontialListView 
+                 
+            	android:id="@+id/listview"
+  				android:layout_width="fill_parent"
+  				android:layout_height="wrap_content"
+            
+            ></com.carlncarl.ami.HorizontialListView>
+           
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/answerButtonsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_column="0"
-            android:layout_columnSpan="2"
-            android:layout_gravity="top"
+            android:layout_gravity="left|bottom"
             android:layout_marginTop="7dp"
             android:layout_row="1"
+            android:background="@drawable/answer_background"
             android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/button_yes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="3dp"
                 android:background="@drawable/button_yes" />
 
             <Button
@@ -48,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginTop="3dp"
                 android:background="@drawable/button_dont" />
 
             <Button
@@ -55,18 +63,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginTop="3dp"
                 android:background="@drawable/button_no" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="206dp"
-            android:layout_height="wrap_content"
-            android:layout_column="1"
-            android:layout_gravity="fill_horizontal|top"
+            android:layout_height="126dp"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:layout_row="0"
+            android:layout_row="1"
             android:background="@drawable/text_panel_gameplay"
+            android:gravity="bottom"
             android:orientation="vertical"
             android:paddingBottom="10dp"
             android:paddingLeft="30dp"
@@ -80,25 +91,18 @@
                 android:text="sad"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <ScrollView
-                android:id="@+id/scrollView1"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="294dp"
-                android:layout_weight="0.54" >
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/textViewAskedQuestion"
+                    android:layout_width="120dp"
                     android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/textViewAskedQuestion"
-                        android:layout_width="120dp"
-                        android:layout_height="match_parent"
-                        android:text="Medium Text"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-                </LinearLayout>
-            </ScrollView>
+                    android:text="Medium Text"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
         </LinearLayout>
 
     </GridLayout>
@@ -114,5 +118,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         layout="@layout/waiting_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+    </LinearLayout>
 
 </LinearLayout>

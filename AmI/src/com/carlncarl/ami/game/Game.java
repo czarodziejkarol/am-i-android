@@ -53,7 +53,7 @@ public class Game implements Serializable {
 	
 	//playerzy testowi
 	public static LinkedList<Player> players_test = new LinkedList<Player>();
-
+	
 	
 	
 
@@ -70,13 +70,6 @@ public class Game implements Serializable {
 
 	public Game(GameActivity activity) {
 		
-		Game.players_test = new LinkedList<Player>();
-		Player p = new Player("1231233-321321-1", "Karol", "cza");
-		players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol", "cza");
-		players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol", "cza");
-		players_test.addFirst(p);
 		
 		this.activity = activity;
 		playersSet = new ArrayList<Player>();
