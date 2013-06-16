@@ -36,12 +36,10 @@ public class PlayGameFragment extends Fragment  {
      * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
      */
 	private GameService gService;
-	private ListView listViewPlayers;
 	private PlayerAdapter adapter;
 	private TabHostActivity parent;
-	private LinearLayout answerButtonsView;
 	private TextView textViewAsker;
-	private GridLayout answerGrid;
+	private LinearLayout answerLayout;
 	private EditText editTextQuestion;
 	private LinearLayout questionLayout;
 	private LinearLayout waitingLayout;
@@ -130,11 +128,9 @@ public class PlayGameFragment extends Fragment  {
 		
 		listview = (HorizontialListView) getView().findViewById(R.id.listview);
 
-		answerButtonsView = (LinearLayout) getView().findViewById(R.id.answerButtonsView);
-		answerButtonsView.setVisibility(View.INVISIBLE);
 		
 		textViewAsker = (TextView) getView().findViewById(R.id.textViewAsker);
-		answerGrid = (GridLayout)getView().findViewById(R.id.answerGrid);
+		answerLayout = (LinearLayout)getView().findViewById(R.id.answerLayout);
 		editTextQuestion = (EditText) getView().findViewById(R.id.editTextQuestion);
 		questionLayout = (LinearLayout) getView().findViewById(R.id.questionLayout);
 		waitingLayout = (LinearLayout) getView().findViewById(R.id.waitingLayout);
@@ -161,10 +157,6 @@ public class PlayGameFragment extends Fragment  {
 		adapter = new PlayerAdapter(getActivity(), Game.players_test);
 		listview.setAdapter(adapter);
 
-		
-		
-
-		
 		
 		
 	}
@@ -248,17 +240,17 @@ public class PlayGameFragment extends Fragment  {
 		case STATE_WAIT:
 			waitingLayout.setVisibility(View.VISIBLE);
 			questionLayout.setVisibility(View.GONE);
-			answerGrid.setVisibility(View.GONE);
+			answerLayout.setVisibility(View.GONE);
 			break;
 		case STATE_ANSWER:
 			waitingLayout.setVisibility(View.GONE);
 			questionLayout.setVisibility(View.GONE);
-			answerGrid.setVisibility(View.VISIBLE);
+			answerLayout.setVisibility(View.VISIBLE);
 			break;
 		case STATE_QUESTION:
 			waitingLayout.setVisibility(View.GONE);
 			questionLayout.setVisibility(View.VISIBLE);
-			answerGrid.setVisibility(View.GONE);
+			answerLayout.setVisibility(View.GONE);
 			break;
 		default:
 			break;

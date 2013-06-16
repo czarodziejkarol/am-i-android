@@ -11,7 +11,6 @@ import java.util.LinkedList;
 
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import com.carlncarl.ami.GameActivity;
@@ -170,11 +169,7 @@ public class Game implements Serializable {
 
 	}
 
-	public void sendMessage(int type, String content) {
-		for (Player player : playersSet) {
 
-		}
-	}
 
 	public LinkedList<Communicat> getInCommunicats() {
 		return inCommunicats;
