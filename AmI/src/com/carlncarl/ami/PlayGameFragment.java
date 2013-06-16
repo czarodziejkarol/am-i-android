@@ -1,5 +1,7 @@
 package com.carlncarl.ami;
 
+import java.util.LinkedList;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,6 +48,8 @@ public class PlayGameFragment extends Fragment  {
 	private ListView listViewMyQuestions;
 	private TextView textViewStatus;
 	private TextView textViewAskedQuestion;
+	private HorizontialListView listview;
+	
 	
 	PlayTabInterface callback;
 	private ArrayAdapter<String> adapterQuestion;
@@ -122,9 +126,10 @@ public class PlayGameFragment extends Fragment  {
 			
 		});
 		
-		listViewPlayers = (ListView) getView().findViewById(R.id.playerlistView);
+		//listViewPlayers = (ListView) getView().findViewById(R.id.playerlistView);
 		
-		
+		listview = (HorizontialListView) getView().findViewById(R.id.listview);
+
 		answerButtonsView = (LinearLayout) getView().findViewById(R.id.answerButtonsView);
 		answerButtonsView.setVisibility(View.INVISIBLE);
 		
@@ -136,6 +141,25 @@ public class PlayGameFragment extends Fragment  {
 		textViewStatus = (TextView) getView().findViewById(R.id.textViewStatus);
 		textViewAskedQuestion = (TextView) getView().findViewById(R.id.textViewAskedQuestion);
 		
+
+		Game.players_test = new LinkedList<Player>();
+		Player p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+		Game.players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+		Game.players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
+		Game.players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+		Game.players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
+		Game.players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+		Game.players_test.addFirst(p);
+		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
+		Game.players_test.addFirst(p);
+		
+		adapter = new PlayerAdapter(getActivity(), Game.players_test);
+		listview.setAdapter(adapter);
 
 		
 		
@@ -156,7 +180,7 @@ public class PlayGameFragment extends Fragment  {
 		//adapter = new PlayerAdapter(gService, Game.players);
 		///test graczy
 		adapter = new PlayerAdapter(gService, Game.players_test);
-		listViewPlayers.setAdapter(adapter);
+		listview.setAdapter(adapter);
 		listViewMyQuestions = (ListView)getView().findViewById(R.id.listViewMyQuestions);
 		adapterQuestion = new ArrayAdapter<String>(gService, android.R.layout.simple_list_item_1, gService.getGame().getMyQuestions());
 		listViewMyQuestions.setAdapter(adapterQuestion);
