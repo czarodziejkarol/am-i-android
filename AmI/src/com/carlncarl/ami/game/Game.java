@@ -44,9 +44,10 @@ public class Game implements Serializable {
 	private Boolean finished = false;
 	private Player owner;
 	private Player me;
+	
 	private ArrayList<Player> playersSet;
 	private ArrayList<String> myQuestions = new ArrayList<String>();
-	
+	private LinkedList<Action> actions = new LinkedList<Action>();
 	
 	public static LinkedList<Player> players = new LinkedList<Player>();
 	
@@ -66,6 +67,14 @@ public class Game implements Serializable {
 	private boolean server;
 
 	private GameService gameService;
+	
+	public static final int GAME_STATUS_WRITE_QUESTION = 3;
+	public static final int GAME_STATUS_WAIT_FOR_QUESTION = 4;
+	public static final int GAME_STATUS_TYPE_ANSWER = 5;
+	public static final int GAME_STATUS_WAIT_FOR_SEND = 6;
+	public static final int GAME_STATUS_WAIT_NEXT_ROUND = 7;
+	
+	private int gameStatus;
 
 	public Game(GameActivity activity) {
 		
@@ -363,8 +372,6 @@ public class Game implements Serializable {
 		com.setVal(Communicat.STATUS_START);
 		sendCommunicat(com);
 		
-		
-		
 
 	}
 
@@ -520,4 +527,24 @@ public class Game implements Serializable {
 		sendToServerCommunicat(com);
 	}
 
+	public LinkedList<Action> getActions() {
+		return actions;
+	}
+
+	public void setActions(LinkedList<Action> actions) {
+		this.actions = actions;
+	}
+	
+	public Action getLastAction(){
+		return this.actions.getLast();
+	}
+
+	public int getGameStatus() {
+		return gameStatus;
+	}
+
+	public void setGameStatus(int gameStatus) {
+		this.gameStatus = gameStatus;
+	}
+	
 }

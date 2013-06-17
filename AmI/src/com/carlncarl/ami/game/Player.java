@@ -35,8 +35,7 @@ public class Player implements Serializable{
 	private String deviceMAC;
 	private String typedCharacter;
 	private String character;
-	private LinkedList<String> questions;
-	
+	private LinkedList<Action> actions;
 	
 	public Player(Cursor c){
 		//device.
@@ -73,7 +72,7 @@ public class Player implements Serializable{
 		this.name = com.getPlayerName();
 		this.uuid = com.getPlayerUUID();
 		this.deviceMAC = com.getVal();
-		this.questions = new LinkedList<String>();
+		this.actions = new LinkedList<Action>();
 	}
 
 	public String getUuid() {
@@ -173,11 +172,13 @@ public class Player implements Serializable{
 		this.character = character;
 	}
 
-	public LinkedList<String> getQuestions() {
-		return questions;
+	public LinkedList<Action> getActions() {
+		return actions;
 	}
 
-	public void setQuestions(LinkedList<String> questions) {
-		this.questions = questions;
+	public void setActions(LinkedList<Action> actions) {
+		this.actions = actions;
 	}
+
+
 }
