@@ -184,8 +184,28 @@ public class PlayGameFragment extends Fragment  {
 				setQuestionFromMy(position);
 			}
 		});
+		
+		
+		setState();
 	}
 	
+	private void setState() {
+		int state = gService.getGame().getGameStatus();
+		
+		switch (state) {
+		case Game.GAME_STATUS_WRITE_QUESTION:
+			setVisibleState(STATE_QUESTION);
+			break;
+		case Game.GAME_STATUS_TYPE_ANSWER:
+			setVisibleState(STATE_ANSWER);
+			break;
+		default:
+			setVisibleState(STATE_WAIT);
+			break;
+		}
+		
+	}
+
 	protected void setQuestionFromMy(int position) {
 		editTextQuestion.setText(gService.getGame().getMyQuestions().get(position));
 		

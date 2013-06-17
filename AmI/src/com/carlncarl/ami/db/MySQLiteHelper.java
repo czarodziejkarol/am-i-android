@@ -27,22 +27,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + Database.Game.COLUMN_NAME_DATE + " INTEGER PRIMARY KEY ,"
             + Database.Game.COLUMN_NAME_FINISHED + INT_TYPE + COMMA_SEP
             + Database.Game.COLUMN_NAME_OWNER + TEXT_TYPE + COMMA_SEP
-            + Database.Game.COLUMN_NAME_NAME + INT_TYPE + COMMA_SEP
-            + Database.Game.COLUMN_NAME_PASSWORD + TEXT_TYPE + COMMA_SEP
             + " FOREIGN KEY (" + Database.Game.COLUMN_NAME_OWNER
             + ") REFERENCES " + Database.Player.TABLE_NAME + "("
             + Database.Player.COLUMN_NAME_UUID + ")" + " );";
     private static final String SQL_CREATE_GAME_PLAYERS_TABLE = " CREATE TABLE " + Database.GamePlayers.TABLE_NAME + " ("
-            + Database.GamePlayers.COLUMN_NAME_PLAYER_NAME + TEXT_TYPE
+            + Database.GamePlayers.COLUMN_NAME_PLAYER_UUID + TEXT_TYPE
             + COMMA_SEP + Database.GamePlayers.COLUMN_NAME_GAME_START
             + INT_TYPE + COMMA_SEP
             + Database.GamePlayers.COLUMN_NAME_CHARACTER_NAME + TEXT_TYPE
             + COMMA_SEP + Database.GamePlayers.COLUMN_NAME_POSITION + INT_TYPE
             + COMMA_SEP + " PRIMARY KEY ("
-            + Database.GamePlayers.COLUMN_NAME_PLAYER_NAME + COMMA_SEP
+            + Database.GamePlayers.COLUMN_NAME_PLAYER_UUID + COMMA_SEP
             + Database.GamePlayers.COLUMN_NAME_GAME_START + COMMA_SEP
             + Database.GamePlayers.COLUMN_NAME_CHARACTER_NAME + ")" + COMMA_SEP
-            + " FOREIGN KEY (" + Database.GamePlayers.COLUMN_NAME_PLAYER_NAME
+            + " FOREIGN KEY (" + Database.GamePlayers.COLUMN_NAME_PLAYER_UUID
             + ") REFERENCES " + Database.Player.TABLE_NAME + "("
             + Database.Player.COLUMN_NAME_UUID + ")" + COMMA_SEP
             + " FOREIGN KEY (" + Database.GamePlayers.COLUMN_NAME_GAME_START
@@ -53,19 +51,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + Database.Question.COLUMN_NAME_QUESTION + TEXT_TYPE
             + " PRIMARY KEY " + COMMA_SEP
             + Database.Question.COLUMN_NAME_MY_QUESTION + INT_TYPE + " ) ;";
-	private static final String SQL_CREATE_GAME_ACTIONS_TABLE = " CREATE TABLE " + Database.GameAction.TABLE_NAME + " ("
-			+ Database.GameAction.COLUMN_NAME_PLAYER_NAME + TEXT_TYPE
+	private static final String SQL_CREATE_GAME_ACTIONS_TABLE = " CREATE TABLE " 
+            + Database.GameAction.TABLE_NAME + " ("
+			+ Database.GameAction.COLUMN_NAME_PLAYER_UUID + TEXT_TYPE
 			+ COMMA_SEP + Database.GameAction.COLUMN_NAME_GAME_START + INT_TYPE
 			+ COMMA_SEP + Database.GameAction.COLUMN_NAME_ACTION_NUMBER
-			+ INT_TYPE + COMMA_SEP + Database.GameAction.COLUMN_NAME_QUESTION
-			+ TEXT_TYPE + COMMA_SEP + Database.GameAction.COLUMN_NAME_TYPE
+			+ INT_TYPE + COMMA_SEP + Database.GameAction.COLUMN_NAME_PARENT_ACTION_NUMBER
+			+ INT_TYPE + COMMA_SEP + Database.GameAction.COLUMN_NAME_TYPE
 			+ INT_TYPE + COMMA_SEP + Database.GameAction.COLUMN_NAME_VALUE
 			+ TEXT_TYPE + COMMA_SEP + " PRIMARY KEY ("
 			+ Database.GameAction.COLUMN_NAME_GAME_START + COMMA_SEP
 			+ Database.GameAction.COLUMN_NAME_ACTION_NUMBER + ")" + COMMA_SEP
-			+ " FOREIGN KEY (" + Database.GameAction.COLUMN_NAME_PLAYER_NAME
+			+ " FOREIGN KEY (" + Database.GameAction.COLUMN_NAME_PLAYER_UUID
 			+ ") REFERENCES " + Database.Player.TABLE_NAME + "("
-			+ Database.Player.COLUMN_NAME_NAME + ")" + COMMA_SEP
+			+ Database.Player.COLUMN_NAME_UUID + ")" + COMMA_SEP
 			+ " FOREIGN KEY (" + Database.GameAction.COLUMN_NAME_GAME_START
 			+ ") REFERENCES " + Database.Game.TABLE_NAME + "("
 			+ Database.Game.COLUMN_NAME_DATE + ")" + " );" ;
