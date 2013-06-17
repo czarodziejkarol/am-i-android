@@ -12,9 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.carlncarl.ami.game.Player;
+import com.carlncarl.ami.game.Action;
+import com.carlncarl.ami.game.Game;
 
-public class HistoryAdapter extends ArrayAdapter<Player> {
+
+public class HistoryAdapter extends ArrayAdapter<Action> {
 	
 
 
@@ -22,9 +24,9 @@ public class HistoryAdapter extends ArrayAdapter<Player> {
 
 	
 		private final Context context;
-		private final LinkedList<Player> values;
+		private final LinkedList<Action> values;
 
-		public HistoryAdapter(Context context, LinkedList<Player> values) {
+		public HistoryAdapter(Context context, LinkedList<Action> values) {
 			super(context, R.layout.history_view, values);
 			this.context = context;
 			this.values = values;
@@ -35,16 +37,37 @@ public class HistoryAdapter extends ArrayAdapter<Player> {
 			LayoutInflater inflater = (LayoutInflater) context
 			        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			int viewId ;
-			
+			int yes = 0 , no = 0 , dont = 0;
 				 viewId = R.layout.history_view;
 			
 			
 			View rowView = inflater.inflate(viewId , parent, false);
-			TextView textViewPlayerName = (TextView) rowView.findViewById(R.id.player_view_name);
+			TextView textHistoryAskedQuestion = (TextView) rowView.findViewById(R.id.textHistoryAskedQuestion);
 			//TextView textViewPlayerStatus = (TextView) rowView.findViewById(R.id.textViewPlayerStatus);
+			TextView historyAnswers = (TextView) rowView.findViewById(R.id.historyAnswers);
 			
+			textHistoryAskedQuestion.setText(values.get(position).getValue());
 			
-			textViewPlayerName.setText(values.get(position).getName());
+			for (Action ans : values.get(position).getChilds()) {
+				switch (Integer.parseInt(ans.getValue())) {
+				case Game.ANSWER_YES:
+					yes++;
+					break;
+				case Game.ANSWER_NO:
+					no++;
+					break;
+	
+					
+					
+				default:
+					
+					dont++;
+					
+					break;
+				}
+			}
+			
+			//textViewPlayerName.setText(values.get(position).getName());
 			//textViewPlayerStatus.setText(values.get(position).getStatus());
 			
 			
