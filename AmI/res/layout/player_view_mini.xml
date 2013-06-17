@@ -8,6 +8,8 @@
         android:id="@+id/player_view_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/ramka_zdj_kolejka"
         android:padding="6dp"
         android:src="@drawable/default_icon" />
@@ -20,7 +22,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignRight="@+id/player_view_image"
         android:layout_marginBottom="7dp"
-        android:layout_marginLeft="7dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="6dp"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
