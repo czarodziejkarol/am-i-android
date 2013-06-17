@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
  * @author mwho
  *
  */
-public class Tab2Fragment extends Fragment {
+public class HistoryFragment extends Fragment {
     /** (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
      */
