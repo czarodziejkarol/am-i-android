@@ -28,8 +28,9 @@
         <item>Typowy Seba</item>
     </string-array>
     <string-array name="questions_array">
-        <item>Is my sex female?</item>
-        <item>Am i from cartoon?</item>
+        <item>Am I male?</item>
+        <item>Am I female?</item>
+        <item>Am I from cartoon?</item>
         <item>Am I Polish?</item>
         <item>Do I have dark hair?</item>
         <item>Do I drink a lot</item>

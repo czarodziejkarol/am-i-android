@@ -89,7 +89,7 @@ public class GameActivity extends Activity implements
 	protected void onStart() {
 		active = true;
 		super.onStart();
-
+		
 		bindService(new Intent(this, GameService.class), sConn,
 				Context.BIND_AUTO_CREATE);
 		Intent intent = new Intent(this, GameService.class);
@@ -100,6 +100,7 @@ public class GameActivity extends Activity implements
 	@Override
 	protected void onStop() {
 		active = false;
+		
 //		if (serviceConnected) {
 //			unbindService(sConn);
 //			stopService(new Intent(this, GameService.class));
@@ -415,7 +416,15 @@ public class GameActivity extends Activity implements
 	}
 
 	private void exitGame() {
-		this.stopService(new Intent(this, GameService.class));
+		unbindService(sConn);
+		
+		boolean isBound = false;
+		isBound = getApplicationContext().bindService( new Intent(getApplicationContext(), GameService.class), sConn, Context.BIND_AUTO_CREATE );
+
+		if (isBound)
+		    getApplicationContext().unbindService(sConn);
+		gService.stopService(new Intent(this, GameService.class));
+		
 		finish();
 	}
 

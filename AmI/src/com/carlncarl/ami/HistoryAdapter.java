@@ -66,7 +66,7 @@ public class HistoryAdapter extends ArrayAdapter<Action> {
 					break;
 				}
 			}
-			
+			historyAnswers.setText("Yes: "+yes+" No: "+no+" ?:"+dont);
 			//textViewPlayerName.setText(values.get(position).getName());
 			//textViewPlayerStatus.setText(values.get(position).getStatus());
 			

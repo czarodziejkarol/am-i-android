@@ -14,7 +14,7 @@ public class Action {
 	private String value;
 	private int number;
 	private Action parentAction;
-	private LinkedList<Action> childs;
+	private LinkedList<Action> childs = new LinkedList<Action>();
 	
 	public int getType() {
 		return type;

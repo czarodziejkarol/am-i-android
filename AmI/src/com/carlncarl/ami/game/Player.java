@@ -180,5 +180,10 @@ public class Player implements Serializable{
 		this.actions = actions;
 	}
 
+	public void addAction(Action action) {
+		action.setPlayer(this);
+		actions.add(action);
+	}
+
 
 }

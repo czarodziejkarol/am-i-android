@@ -26,6 +26,7 @@ public class Communicat {
 	private String playerUUID;
 	private String playerName;
 	private String val;
+	private int number;
 	private String image;
 	//private
 	
@@ -51,6 +52,20 @@ public class Communicat {
 		case TYPE_PHOTO:
 			com = TYPE_PHOTO + 
 			INSIDE_DELIMETER + val + 
+			INSIDE_DELIMETER + KOM_DELIMETER;
+			break;
+		case TYPE_QUESTION:
+			com = type +
+			INSIDE_DELIMETER + val + 
+			INSIDE_DELIMETER + number + 
+			INSIDE_DELIMETER + playerUUID + 
+			INSIDE_DELIMETER + KOM_DELIMETER;
+			break;
+		case TYPE_ANSWER:
+			com = type +
+			INSIDE_DELIMETER + val + 
+			INSIDE_DELIMETER + number + 
+			INSIDE_DELIMETER + playerUUID + 
 			INSIDE_DELIMETER + KOM_DELIMETER;
 			break;
 		default:
@@ -81,6 +96,16 @@ public class Communicat {
 		case TYPE_DEVICE_ID:
 			this.val = new String(splittedCom[1]);
 			this.playerName = new String(splittedCom[2]);
+			this.playerUUID = new String(splittedCom[3]);
+			break;
+		case TYPE_QUESTION:
+			this.val = new String(splittedCom[1]);
+			this.number = Integer.parseInt(splittedCom[2]);
+			this.playerUUID = new String(splittedCom[3]);
+			break;
+		case TYPE_ANSWER:
+			this.val = new String(splittedCom[1]);
+			this.number = Integer.parseInt(splittedCom[2]);
 			this.playerUUID = new String(splittedCom[3]);
 			break;
 		default:
@@ -131,6 +156,14 @@ public class Communicat {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
 	}
 
 

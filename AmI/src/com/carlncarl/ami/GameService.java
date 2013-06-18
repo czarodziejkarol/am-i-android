@@ -24,6 +24,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.carlncarl.ami.game.Action;
 import com.carlncarl.ami.game.Communicat;
 import com.carlncarl.ami.game.Game;
 import com.carlncarl.ami.game.Player;
@@ -63,10 +64,13 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		this.gameActivity = gameActivity;
 		this.game = game2;
 		game.setService(this);
+		game.loadQuestions();
 		
 		Toast.makeText(this, "CREATED", Toast.LENGTH_SHORT).show();
 
 		wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		
+		
 
 		mIntentFilter = new IntentFilter();
 		mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -80,6 +84,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		mChannel = mManager.initialize(this, getMainLooper(), null);
 		mReceiver = new WiFiBroadcastReceiver(mManager, mChannel, this);
 		registerReceiver(mReceiver, mIntentFilter);
+		
 	}
 	
 
@@ -186,7 +191,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 	
 	@Override
 	public boolean onUnbind(Intent intent) {
-		unregisterReceiver(mReceiver);
+//		unregisterReceiver(mReceiver);
 		super.onDestroy();
 		return super.onUnbind(intent);
 	}
@@ -327,7 +332,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 	public void onConnectionInfoAvailable(WifiP2pInfo info) {
 
 		if (game.isServer()) {
-
+			
 		} else {
 			game.info = info;
 
@@ -389,7 +394,33 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		playActivity.startNewTurn(player);
 	}
 
-	public void receveQuestion(Player p, String question) {
-		playActivity.receiveQuestion(p, question);
+	public void receveQuestion(Action action) {
+		playActivity.receiveAction(action);
 	}
+
+	public void receiveAnswer(Action action) {
+		playActivity.receiveAction(action);
+	}
+
+	public void closeWiFi() {
+		mManager.cancelConnect(mChannel, null);
+	}
+	
+	@Override
+	public boolean stopService(Intent name) {
+		unregisterReceiver(mReceiver);
+		this.game.finishGame();
+		mManager.stopPeerDiscovery(mChannel, null);
+		mManager.clearLocalServices(mChannel, null);
+		mManager.clearServiceRequests(mChannel, null);
+		mManager.cancelConnect(mChannel, null);
+
+		mManager.removeGroup(mChannel, null);
+		
+		//wifiManager.disconnect();
+		
+		Toast.makeText(this, "STOP SERVICE", Toast.LENGTH_LONG).show();
+		return super.stopService(name);
+	}
+
 }

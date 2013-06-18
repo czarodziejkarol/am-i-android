@@ -8,13 +8,21 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import com.carlncarl.ami.GameActivity;
 import com.carlncarl.ami.GameService;
+import com.carlncarl.ami.db.Database;
+import com.carlncarl.ami.db.MySQLiteHelper;
 
 /**
  * Created by Karol on 20.05.13.
@@ -31,9 +39,8 @@ public class Game implements Serializable {
 	public static final int ANSWER_YES = 1;
 	public static final int ANSWER_NO = 0;
 	public static final int ANSWER_DONT_KNOW = 3;
-	
-	
-	public static int GAME_PORT = 8888;
+
+	public static int GAME_PORT = 12287;
 
 	private LinkedList<Communicat> inCommunicats = new LinkedList<Communicat>();
 	private LinkedList<Communicat> outCommunicats = new LinkedList<Communicat>();
@@ -44,18 +51,15 @@ public class Game implements Serializable {
 	private Boolean finished = false;
 	private Player owner;
 	private Player me;
-	
+
 	private ArrayList<Player> playersSet;
 	private ArrayList<String> myQuestions = new ArrayList<String>();
 	private LinkedList<Action> actions = new LinkedList<Action>();
-	
+
 	public static LinkedList<Player> players = new LinkedList<Player>();
-	
-	//playerzy testowi
+
+	// playerzy testowi
 	public static LinkedList<Player> players_test = new LinkedList<Player>();
-	
-	
-	
 
 	private ServerSocket serverSocket = null;
 	private ServerCommunication serCommunication = null;
@@ -65,20 +69,22 @@ public class Game implements Serializable {
 	GameActivity activity;
 
 	private boolean server;
+	private boolean threadWorking = true;
+
+	private boolean saveQuestions = true;
 
 	private GameService gameService;
-	
+
 	public static final int GAME_STATUS_WRITE_QUESTION = 3;
 	public static final int GAME_STATUS_WAIT_FOR_QUESTION = 4;
 	public static final int GAME_STATUS_TYPE_ANSWER = 5;
-	public static final int GAME_STATUS_WAIT_FOR_SEND = 6;
-	public static final int GAME_STATUS_WAIT_NEXT_ROUND = 7;
-	
+	public static final int GAME_STATUS_WAIT_FOR_ANSWER = 6;
+	public static final int GAME_STATUS_WAIT_NEXT_ROUND = 8;
+
 	private int gameStatus;
 
 	public Game(GameActivity activity) {
-		
-		
+
 		this.activity = activity;
 		playersSet = new ArrayList<Player>();
 		finished = false;
@@ -99,7 +105,34 @@ public class Game implements Serializable {
 					@Override
 					public void run() {
 						try {
-							while (true) {
+							while (threadWorking) {
+								Thread.sleep(2000);
+								String status = "";
+								if (serverSocket != null) {
+									if (serverSocket.isBound()) {
+										status += "bound ";
+									}
+									if (serverSocket.isClosed()) {
+										status += "closed";
+									}
+								} else {
+									status = "NULL";
+								}
+
+								Log.d("STATUS SERWERA", status);
+							}
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}).start();
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						try {
+							while (threadWorking) {
 								Log.d("AML", "THREAD  POLACZENIE START");
 								Socket socket = serverSocket.accept();
 								Log.d("AML", "ZAAKCEPTOWANO POLACZENIE");
@@ -178,8 +211,6 @@ public class Game implements Serializable {
 
 	}
 
-
-
 	public LinkedList<Communicat> getInCommunicats() {
 		return inCommunicats;
 	}
@@ -201,6 +232,12 @@ public class Game implements Serializable {
 		inCommunicats.add(com);
 		switch (com.getType()) {
 		case Communicat.TYPE_DEVICE_ID:
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			for (Player player : playersSet) {
 				if (com.getVal().equalsIgnoreCase(
 						(String) player.getDevice().deviceAddress.toString())) {
@@ -230,7 +267,7 @@ public class Game implements Serializable {
 		case Communicat.TYPE_TURN:
 			startNewTurn(com);
 			break;
-			
+
 		case Communicat.TYPE_QUESTION_ASKED:
 			sendQuestion(com);
 			break;
@@ -250,55 +287,93 @@ public class Game implements Serializable {
 	}
 
 	private void receiveAnswer(Communicat com) {
-		//przes³anie do activity otrzymania odpowiedzi
-		
+		// przes³anie do activity otrzymania odpowiedzi
+
+		Player p = getPlayerByUUID(com.getPlayerUUID());
+
+		Action action = new Action();
+		action.setNumber(com.getNumber());
+		action.setPlayer(p);
+		action.setValue(com.getVal());
+		lastQuestion.addAnswer(action);
+		gameService.receiveAnswer(action);
+		answers++;
+		if (answers == Game.players.size() - 1) {
+			endTurn();
+		}
 	}
 
 	int answers = 0;
-	
+
 	private void sendAnswer(Communicat com) {
+		gameStatus = GAME_STATUS_WAIT_NEXT_ROUND;
 		Communicat sCom = new Communicat();
+		sCom.setNumber(number++);
 		sCom.setType(Communicat.TYPE_ANSWER);
 		sCom.setVal(com.getVal());
 		sCom.setPlayerUUID(com.getPlayerUUID());
 		sendCommunicat(sCom);
-		answers++;
-		if(answers==Game.players.size()-1){
-			endTurn();
-		}
-		
-		
+
 	}
+
+	private Action lastQuestion;
 
 	private void receiveQuestion(Communicat com) {
 		answers = 0;
 		String question = com.getVal();
 		Player p = getPlayerByUUID(com.getPlayerUUID());
-		gameService.receveQuestion(p,question);
+		Action action = new Action();
+		lastQuestion = action;
+		action.setNumber(com.getNumber());
+		action.setValue(question);
+		p.addAction(action);
+		actions.add(action);
+
+		if (this.saveQuestions) {
+			myQuestions.add(question);
+			// zapis do db
+		}
+
+		if (p.getUuid().equals(this.me.getUuid())) {
+			gameStatus = GAME_STATUS_WAIT_FOR_ANSWER;
+		} else {
+			gameStatus = GAME_STATUS_TYPE_ANSWER;
+		}
+		gameService.receveQuestion(action);
 	}
+
+	private int number = 0;
 
 	private void sendQuestion(Communicat com) {
 		Communicat sCom = new Communicat();
 		sCom.setType(Communicat.TYPE_QUESTION);
 		sCom.setVal(com.getVal());
+		sCom.setNumber(number++);
+		gameStatus = GAME_STATUS_WAIT_FOR_ANSWER;
 		sCom.setPlayerUUID(com.getPlayerUUID());
+
 		sendCommunicat(sCom);
 	}
 
 	private void startNewTurn(Communicat com) {
-		//szukanie playera z uuid
+		// szukanie playera z uuid
 		for (Player player : Game.players) {
-			if(player.getUuid().equals(com.getPlayerUUID())){
+			if (player.getUuid().equals(com.getPlayerUUID())) {
+				if (player.getUuid().equals(this.getMe().getUuid())) {
+					gameStatus = GAME_STATUS_WRITE_QUESTION;
+				} else {
+					gameStatus = GAME_STATUS_WAIT_FOR_QUESTION;
+				}
 				gameService.startTurn(player);
 				break;
 			}
 		}
-		
+
 	}
-	
-	public Player getPlayerByUUID(String uuid){
+
+	public Player getPlayerByUUID(String uuid) {
 		for (Player player : Game.players) {
-			if(player.getUuid().equals(uuid)){
+			if (player.getUuid().equals(uuid)) {
 				return player;
 			}
 		}
@@ -314,7 +389,7 @@ public class Game implements Serializable {
 		if (com.getVal().equals(Communicat.CHOOSE_CHARACTER)) {
 			gameService.chooseCharacter();
 
-		} else if(com.getVal().equals(Communicat.STATUS_START)){
+		} else if (com.getVal().equals(Communicat.STATUS_START)) {
 			gameService.startGame();
 		}
 	}
@@ -355,7 +430,7 @@ public class Game implements Serializable {
 			chars.add(player.getTypedCharacter());
 		}
 		for (int i = 0; i < players.size() - 1; i++) {
-			players.get(i).setCharacter(chars.get(i));
+			players.get(i).setCharacter(chars.get(i + 1));
 		}
 		players.get(players.size() - 1).setCharacter(chars.get(0));
 		for (Player player : players) {
@@ -371,7 +446,6 @@ public class Game implements Serializable {
 		com.setType(Communicat.TYPE_GAME_STATUS);
 		com.setVal(Communicat.STATUS_START);
 		sendCommunicat(com);
-		
 
 	}
 
@@ -426,28 +500,30 @@ public class Game implements Serializable {
 		}
 
 	}
-	
-	public void startTurn(){
-		Communicat com = new Communicat();
-		com.setType(Communicat.TYPE_TURN);
-		com.setPlayerUUID(Game.players.getFirst().getUuid());
-		sendCommunicat(com);
+
+	public void startTurn() {
+		if (isServer()) {
+			Communicat com = new Communicat();
+			com.setType(Communicat.TYPE_TURN);
+			com.setPlayerUUID(Game.players.getFirst().getUuid());
+			sendCommunicat(com);
+		}
 	}
-	
-	public void askQuestion(Communicat com){
-		
+
+	public void askQuestion(Communicat com) {
+
 	}
-	
-	public void endTurn(){
-		
-		
-		//przejœcie do nastêpnego gracza
+
+	public void endTurn() {
+
+		// przejœcie do nastêpnego gracza
 		Game.players.addLast(Game.players.removeFirst());
 		startTurn();
 	}
 
 	public void sendCommunicat(Communicat com) {
 		synchronized (this.outCommunicats) {
+
 			outCommunicats.addLast(com);
 		}
 	}
@@ -519,7 +595,7 @@ public class Game implements Serializable {
 		sendToServerCommunicat(com);
 	}
 
-	public void setAnswerToServer(int answer) {
+	public void sendAnswerToServer(int answer) {
 		Communicat com = new Communicat();
 		com.setType(Communicat.TYPE_ANSWER_SERVER);
 		com.setVal(Integer.toString(answer));
@@ -534,9 +610,9 @@ public class Game implements Serializable {
 	public void setActions(LinkedList<Action> actions) {
 		this.actions = actions;
 	}
-	
-	public Action getLastAction(){
-		return this.actions.getLast();
+
+	public Action getLastAction() {
+		return lastQuestion;
 	}
 
 	public int getGameStatus() {
@@ -546,5 +622,106 @@ public class Game implements Serializable {
 	public void setGameStatus(int gameStatus) {
 		this.gameStatus = gameStatus;
 	}
-	
+
+	public void finishGame() {
+		this.finished = true;
+		
+		if (server) {
+			threadWorking = false;
+			for (Player player : this.playersSet) {
+				try {
+					if (player.getCommun() != null
+							&& player.getCommun().socket != null
+							&& !player.getCommun().socket.isClosed())
+						player.getCommun().socket.getInputStream().close();
+						player.getCommun().socket.getOutputStream().close();
+						player.getCommun().socket.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				if (serverSocket != null)
+					serverSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				if (serCommunication != null && serCommunication.socket != null
+						&& !serCommunication.socket.isClosed()) {
+					serCommunication.socket.getOutputStream().close();
+					serCommunication.socket.getInputStream().close();
+					serCommunication.socket.close();
+				}
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public boolean isSaveQuestions() {
+		return saveQuestions;
+	}
+
+	public void setSaveQuestions(boolean saveQuestions) {
+		this.saveQuestions = saveQuestions;
+	}
+
+	public void loadQuestions() {
+		new LoadingQuestionsTask().execute("");
+	}
+
+	private class LoadingQuestionsTask extends
+			AsyncTask<Object, Integer, ArrayList<String>> {
+
+		@Override
+		protected ArrayList<String> doInBackground(Object... params) {
+			MySQLiteHelper myHel = new MySQLiteHelper(
+					Game.this.gameService.getBaseContext());
+
+			SQLiteDatabase db = myHel.getReadableDatabase();
+			try {
+				get(1000, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String selection = "" + Database.Question.COLUMN_NAME_MY_QUESTION
+					+ " = 1";
+			Cursor c = db.query(Database.Question.TABLE_NAME, null, selection,
+					null, null, null, null);
+
+			ArrayList<String> questions = new ArrayList<String>();
+			for (int i = 0; i < c.getCount(); i++) {
+				c.moveToNext();
+				questions
+						.add(c.getString(c
+								.getColumnIndex(Database.Question.COLUMN_NAME_QUESTION)));
+			}
+
+			db.close();
+			return questions;
+
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<String> result) {
+			if (result != null) {
+				Game.this.myQuestions = result;
+			}
+		}
+	}
 }
