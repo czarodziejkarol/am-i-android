@@ -1,21 +1,12 @@
 package com.carlncarl.ami;
 
-import java.util.LinkedList;
-
-import com.carlncarl.ami.game.Game;
-import com.carlncarl.ami.game.Player;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
  
 
  
@@ -50,37 +41,33 @@ public class HistoryFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		parent = (TabHostActivity) getActivity();
 		gService = parent.getGService();
-		
-    	
-		
-		
-		
-		
-		
-
-		
-		
+		setGService(parent.getGService());
 	}
     
     
     public void setGService(GameService gs){
 		gService = gs;
-		
 		setState();
-		
-		
-		
-			
-		
-		
 	
 	}
-
+	@Override
+	public void onViewStateRestored(Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		setState();
+	}
 
 	private void setState() {
-		historyList = (ListView) getView().findViewById(R.id.historyList);
-		historyAdapter = new HistoryAdapter(gService, null);
-		historyList.setAdapter(historyAdapter);
+		if(gService!=null){
+			
+			if(historyAdapter!=null){
+				historyAdapter.notifyDataSetChanged();
+			} else {
+				historyList = (ListView) getView().findViewById(R.id.historyList);
+				historyAdapter = new HistoryAdapter(gService, gService.getGame().getActions());
+				historyList.setAdapter(historyAdapter);
+			}
+			
+		}
 	}
 
 }

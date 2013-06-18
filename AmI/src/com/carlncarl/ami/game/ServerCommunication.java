@@ -52,18 +52,50 @@ public class ServerCommunication implements Runnable{
 		@Override
 		protected Boolean doInBackground(WifiP2pInfo... params) {
 			WifiP2pInfo info = params[0];
-			try {
-				socket.bind(null);
+		//	try {
+//				try {
+//					//Thread.sleep(3000);
+//				} catch (InterruptedException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 				try {
-					socket.connect((new InetSocketAddress(
-							info.groupOwnerAddress, Game.GAME_PORT)));
-				} catch (ConnectException e) {
-					// Toast.makeText(ServerCommunication.this.game.activity,
-					// "BLAD POLACZENIA", Toast.LENGTH_SHORT).show();
-					socket.connect((new InetSocketAddress(
-							info.groupOwnerAddress, Game.GAME_PORT)));
+					socket.bind(null);
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
 				}
-				OutputStream outputStream = socket.getOutputStream();
+//				try {
+					while(!socket.isConnected()){
+						try {
+							socket.connect((new InetSocketAddress(
+									info.groupOwnerAddress, Game.GAME_PORT)));
+							
+						} catch (IOException e) {
+							socket = new Socket();
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							e.printStackTrace();
+						}
+					}
+					
+//				} catch (ConnectException e) {
+//					// Toast.makeText(ServerCommunication.this.game.activity,
+//					// "BLAD POLACZENIA", Toast.LENGTH_SHORT).show();
+////					socket.connect((new InetSocketAddress(
+////							info.groupOwnerAddress, Game.GAME_PORT)));
+//				}
+				OutputStream outputStream = null;
+				try {
+					outputStream = socket.getOutputStream();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				PrintWriter pw = new PrintWriter(outputStream);
 				Communicat com = new Communicat();
 				com.setType(Communicat.TYPE_DEVICE_ID);
@@ -92,10 +124,10 @@ public class ServerCommunication implements Runnable{
 					}
 				}
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			return null;
 		}
 

@@ -1,23 +1,22 @@
 package com.carlncarl.ami;
 
-import java.util.LinkedList;
-
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.carlncarl.ami.game.Action;
 import com.carlncarl.ami.game.Game;
 import com.carlncarl.ami.game.Player;
  
@@ -29,9 +28,10 @@ import com.carlncarl.ami.game.Player;
  */
 public class PlayGameFragment extends Fragment  {
 	
-    private static final int STATE_WAIT = 0;
+    private static final int STATE_WAIT_ANSWERS = 0;
     private static final int STATE_QUESTION = 1;
     private static final int STATE_ANSWER = 2;
+	private static final int STATE_WAIT_QUESTION = 3;
 	/** (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
      */
@@ -138,27 +138,33 @@ public class PlayGameFragment extends Fragment  {
 		textViewAskedQuestion = (TextView) getView().findViewById(R.id.textViewAskedQuestion);
 		
 
-		Game.players_test = new LinkedList<Player>();
-		Player p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
-		Game.players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
-		Game.players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
-		Game.players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
-		Game.players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
-		Game.players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
-		Game.players_test.addFirst(p);
-		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
-		Game.players_test.addFirst(p);
-		
-		adapter = new PlayerAdapter(getActivity(), Game.players_test);
-		listview.setAdapter(adapter);
+//		Game.players_test = new LinkedList<Player>();
+//		Player p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+//		Game.players_test.addFirst(p);
+//		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+//		Game.players_test.addFirst(p);
+//		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
+//		Game.players_test.addFirst(p);
+//		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+//		Game.players_test.addFirst(p);
+//		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
+//		Game.players_test.addFirst(p);
+//		p = new Player("1231233-321321-1", "Karol", Player.DEFAULT_PHOTO);
+//		Game.players_test.addFirst(p);
+//		p = new Player("1231233-321321-1", "Karol",Player.DEFAULT_PHOTO);
+//		Game.players_test.addFirst(p);
+//		
+//		adapter = new PlayerAdapter(getActivity(), Game.players);
+//		listview.setAdapter(adapter);
 
 		
 		
+	}
+	
+	@Override
+	public void onViewStateRestored(Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		setState();
 	}
 	
 	
@@ -169,9 +175,38 @@ public class PlayGameFragment extends Fragment  {
 		
 		
 		
-		//adapter = new PlayerAdapter(gService, Game.players);
+		
+		
+		
+		setState();
+	}
+	
+	private void setState() {
+		if(gService == null) return;
+		int state = gService.getGame().getGameStatus();
+		
+		switch (state) {
+		case Game.GAME_STATUS_WRITE_QUESTION:
+			setVisibleState(STATE_QUESTION);
+			break;
+		case Game.GAME_STATUS_TYPE_ANSWER:
+			setVisibleState(STATE_ANSWER);
+			break;
+		case Game.GAME_STATUS_WAIT_FOR_QUESTION:
+			setVisibleState(STATE_WAIT_QUESTION);
+			break;
+		case Game.GAME_STATUS_WAIT_FOR_ANSWER:
+			setVisibleState(STATE_WAIT_ANSWERS);
+			break;
+		default:
+			setVisibleState(STATE_WAIT_ANSWERS);
+			break;
+		}
+		
+		
+		adapter = new PlayerAdapter(gService, Game.players);
 		///test graczy
-		adapter = new PlayerAdapter(gService, Game.players_test);
+		//adapter = new PlayerAdapter(gService, Game.players_test);
 		listview.setAdapter(adapter);
 		listViewMyQuestions = (ListView)getView().findViewById(R.id.listViewMyQuestions);
 		adapterQuestion = new ArrayAdapter<String>(gService, android.R.layout.simple_list_item_1, gService.getGame().getMyQuestions());
@@ -185,24 +220,11 @@ public class PlayGameFragment extends Fragment  {
 			}
 		});
 		
-		
-		setState();
-	}
-	
-	private void setState() {
-		int state = gService.getGame().getGameStatus();
-		
-		switch (state) {
-		case Game.GAME_STATUS_WRITE_QUESTION:
-			setVisibleState(STATE_QUESTION);
-			break;
-		case Game.GAME_STATUS_TYPE_ANSWER:
-			setVisibleState(STATE_ANSWER);
-			break;
-		default:
-			setVisibleState(STATE_WAIT);
-			break;
+		Action a = gService.getGame().getLastAction();
+		if(a!=null){
+			receivedQuestion(a.getPlayer(), a.getValue());
 		}
+		
 		
 	}
 
@@ -213,6 +235,10 @@ public class PlayGameFragment extends Fragment  {
 
 	protected void sendQuestion() {
 		callback.onQuestionAsked(editTextQuestion.getText().toString());
+		editTextQuestion.setText("");
+		InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(editTextQuestion.getWindowToken(), 0);
+		
 	}
 
 	@Override
@@ -222,15 +248,17 @@ public class PlayGameFragment extends Fragment  {
 	}
 
     private void answer(int answer) {
+    	
     	callback.onAnswerGiven(answer);
     }
     
     public void receivedQuestion(Player player, String question){
     	if(gService.getGame().getMe().getUuid().equals(player.getUuid())){
-    		textViewStatus.setText("Waiting for answers");
-    		setVisibleState(STATE_WAIT);
+    		
+    		setVisibleState(STATE_WAIT_ANSWERS);
     	} else {
     		setVisibleState(STATE_ANSWER);
+    		textViewAsker.setText(player.getName()+" ("+player.getCharacter()+")");
     		textViewAskedQuestion.setText(question);
     	}
     }
@@ -244,7 +272,7 @@ public class PlayGameFragment extends Fragment  {
     		
     	} else {
     		//odpowiadanie na pytanie
-    		setVisibleState(STATE_WAIT);
+    		setVisibleState(STATE_WAIT_ANSWERS);
     		//answerButtonsView.setVisibility(View.VISIBLE);
     		textViewAsker.setText(player.getName()+" ("+player.getCharacter()+")");
     	}
@@ -257,7 +285,13 @@ public class PlayGameFragment extends Fragment  {
 
     private void setVisibleState(int stateWait) {
     	switch (stateWait) {
-		case STATE_WAIT:
+		case STATE_WAIT_QUESTION:
+			textViewStatus.setText("Waiting for question");
+			waitingLayout.setVisibility(View.VISIBLE);
+			questionLayout.setVisibility(View.GONE);
+			answerLayout.setVisibility(View.GONE);
+		case STATE_WAIT_ANSWERS:
+			textViewStatus.setText("Waiting for answers");
 			waitingLayout.setVisibility(View.VISIBLE);
 			questionLayout.setVisibility(View.GONE);
 			answerLayout.setVisibility(View.GONE);

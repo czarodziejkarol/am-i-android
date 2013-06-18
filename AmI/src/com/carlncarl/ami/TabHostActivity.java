@@ -22,6 +22,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
 
 import com.carlncarl.ami.PlayGameFragment.PlayTabInterface;
+import com.carlncarl.ami.game.Action;
 import com.carlncarl.ami.game.Game;
 import com.carlncarl.ami.game.Player;
 
@@ -54,6 +55,7 @@ public class TabHostActivity extends FragmentActivity implements
 			PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
 			playFragment.setGService(gService);
 			game = gService.getGame();
+
 			//gService.initialize(GameActivity.this, game);
 			// gService.setActivity(GameActivity.this);
 			// gService.setGame(game);
@@ -118,6 +120,8 @@ public class TabHostActivity extends FragmentActivity implements
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		// Bundle extras = getIntent().getExtras();
 		// if (extras != null) {
 		// this.setGame((Game) extras.getSerializable(GameService.EXTRA_GAME));
@@ -305,7 +309,7 @@ public class TabHostActivity extends FragmentActivity implements
 
 	@Override
 	public void onAnswerGiven(int answer) {
-		game.setAnswerToServer(answer);
+		game.sendAnswerToServer(answer);
 	}
 
 	@Override
@@ -332,14 +336,29 @@ public class TabHostActivity extends FragmentActivity implements
 	
 	
 	public void receiveQuestion(final Player p, final String question){
+
+	}
+
+	public void receiveAction(final Action action) {
+		if(action.getType() == Action.ACTION_QUESTION){
 		this.runOnUiThread(new Runnable() {
 			
 			@Override
 			public void run() {
 				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
-				playFragment.receivedQuestion(p, question);
+				playFragment.receivedQuestion(action.getPlayer(), action.getValue());
 			}
 		});
+		} else {
+//			this.runOnUiThread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
+//					playFragment.receivedQuestion(action.getPlayer(), action.getValue());
+//				}
+//			});
+		}
 	}
 	
 }
