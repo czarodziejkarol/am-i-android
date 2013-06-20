@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/lobbyimageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/payer_label" />
+
+    <ImageView
+        android:id="@+id/lobbyPlayerImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageView1"
+        android:layout_alignTop="@+id/imageView1"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="22dp"
+        android:src="@drawable/default_icon" />
+
+    <TextView
+        android:id="@+id/lobbyPlayerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lobbyPlayerImg"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/lobbyPlayerImg"
+        android:text="name"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/lobbyCharacterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/lobbyPlayerName"
+        android:layout_below="@+id/lobbyPlayerName"
+        android:text="character"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/lobbyPlayerStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/lobbyCharacterName"
+        android:layout_below="@+id/lobbyCharacterName"
+        android:text="status"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>

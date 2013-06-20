@@ -36,12 +36,12 @@ public class HistoryAdapter extends ArrayAdapter<Action> {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) context
 			        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			int viewId ;
+		
 			int yes = 0 , no = 0 , dont = 0;
-				 viewId = R.layout.history_view;
+				 
 			
 			
-			View rowView = inflater.inflate(viewId , parent, false);
+			View rowView = inflater.inflate(R.layout.history_view, parent, false);
 			TextView textHistoryAskedQuestion = (TextView) rowView.findViewById(R.id.textHistoryAskedQuestion);
 			//TextView textViewPlayerStatus = (TextView) rowView.findViewById(R.id.textViewPlayerStatus);
 			TextView historyAnswers = (TextView) rowView.findViewById(R.id.historyAnswers);

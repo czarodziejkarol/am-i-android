@@ -183,7 +183,7 @@ public class TabHostActivity extends FragmentActivity implements
 				this.mTabHost.newTabSpec("Tab3").setIndicator(
 						prepareTabView(this,
 								R.drawable.button_panel_center_right)),
-				(tabInfo = new TabInfo("Tab3", Tab3Fragment.class, args)));
+				(tabInfo = new TabInfo("Tab3", LobbyFragment.class, args)));
 		this.mapTabInfo.put(tabInfo.tag, tabInfo);
 		TabHostActivity.addTab(
 				this,
