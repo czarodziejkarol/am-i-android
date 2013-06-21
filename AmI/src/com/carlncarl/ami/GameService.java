@@ -157,7 +157,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		for (WifiP2pDevice device : peerList) {
 			boolean isIn = false;
 			for (Player player : game.getPlayersSet()) {
-				if (player.getDevice().deviceAddress
+				if (player.getDevice()!=null&&player.getDevice().deviceAddress
 						.equals(player.getDevice().deviceAddress)) {
 					isIn = true;
 					break;
@@ -171,7 +171,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		ArrayList<Player> toDel = new ArrayList<Player>();
 		for (Player player : game.getPlayersSet()) {
 			// boolean isIn = false;
-			if (player.getDevice().status == WifiP2pDevice.UNAVAILABLE) {
+			if (player.getDevice()!=null && player.getDevice().status == WifiP2pDevice.UNAVAILABLE) {
 				toDel.add(player);
 			}
 			// for (WifiP2pDevice wifiP2pDevice : peerList) {
@@ -413,7 +413,6 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		mManager.stopPeerDiscovery(mChannel, null);
 		mManager.clearLocalServices(mChannel, null);
 		mManager.clearServiceRequests(mChannel, null);
-		mManager.cancelConnect(mChannel, null);
 
 		mManager.removeGroup(mChannel, null);
 		

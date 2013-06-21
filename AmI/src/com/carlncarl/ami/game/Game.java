@@ -1,13 +1,17 @@
 package com.carlncarl.ami.game;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -16,7 +20,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import com.carlncarl.ami.GameActivity;
@@ -55,6 +58,7 @@ public class Game implements Serializable {
 	private ArrayList<Player> playersSet;
 	private ArrayList<String> myQuestions = new ArrayList<String>();
 	private LinkedList<Action> actions = new LinkedList<Action>();
+	private LinkedList<Action> myActions = new LinkedList<Action>();
 
 	public static LinkedList<Player> players = new LinkedList<Player>();
 
@@ -100,33 +104,33 @@ public class Game implements Serializable {
 
 				}
 				Log.d("AML", "WYSTARTOWANO SERWER");
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							while (threadWorking) {
-								Thread.sleep(2000);
-								String status = "";
-								if (serverSocket != null) {
-									if (serverSocket.isBound()) {
-										status += "bound ";
-									}
-									if (serverSocket.isClosed()) {
-										status += "closed";
-									}
-								} else {
-									status = "NULL";
-								}
-
-								Log.d("STATUS SERWERA", status);
-							}
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}).start();
+//				new Thread(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						try {
+//							while (threadWorking) {
+//								Thread.sleep(2000);
+//								String status = "";
+//								if (serverSocket != null) {
+//									if (serverSocket.isBound()) {
+//										status += "bound ";
+//									}
+//									if (serverSocket.isClosed()) {
+//										status += "closed";
+//									}
+//								} else {
+//									status = "NULL";
+//								}
+//
+//								Log.d("STATUS SERWERA", status);
+//							}
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//				}).start();
 				new Thread(new Runnable() {
 
 					@Override
@@ -137,7 +141,8 @@ public class Game implements Serializable {
 								Socket socket = serverSocket.accept();
 								Log.d("AML", "ZAAKCEPTOWANO POLACZENIE");
 								Thread t = new Thread(new PlayerCommunication(
-										Game.this, socket));
+										Game.this, Game.this.gameService,
+										socket));
 								t.start();
 							}
 						} catch (IOException e) {
@@ -228,12 +233,15 @@ public class Game implements Serializable {
 	}
 
 	public synchronized Player addIn(Communicat com) {
-
-		inCommunicats.add(com);
+		 synchronized (inCommunicats) {
+		//
+			 inCommunicats.add(com);
+		 }
+		 Log.d("COMMUNICAT:", com.toString());
 		switch (com.getType()) {
 		case Communicat.TYPE_DEVICE_ID:
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -251,6 +259,9 @@ public class Game implements Serializable {
 			break;
 		case Communicat.TYPE_PLAYER:
 			typePlayer(com);
+			break;
+		case Communicat.TYPE_PHOTO:
+			setPlayerPhoto(com);
 			break;
 
 		case Communicat.TYPE_GAME_STATUS:
@@ -286,10 +297,15 @@ public class Game implements Serializable {
 		return null;
 	}
 
+	private void setPlayerPhoto(Communicat com) {
+		Player p = this.getPlayerByUUID(com.getPlayerUUID(), playersSet);
+		p.setImage(com.getVal());
+	}
+
 	private void receiveAnswer(Communicat com) {
 		// przes³anie do activity otrzymania odpowiedzi
 
-		Player p = getPlayerByUUID(com.getPlayerUUID());
+		Player p = getPlayerByUUID(com.getPlayerUUID(), Game.players);
 
 		Action action = new Action();
 		action.setNumber(com.getNumber());
@@ -321,16 +337,20 @@ public class Game implements Serializable {
 	private void receiveQuestion(Communicat com) {
 		answers = 0;
 		String question = com.getVal();
-		Player p = getPlayerByUUID(com.getPlayerUUID());
+		Player p = getPlayerByUUID(com.getPlayerUUID(), Game.players);
 		Action action = new Action();
 		lastQuestion = action;
 		action.setNumber(com.getNumber());
 		action.setValue(question);
 		p.addAction(action);
 		actions.add(action);
+		if (action.getPlayer().getUuid().equals(me.getUuid())) {
+			myActions.add(action);
+		}
 
 		if (this.saveQuestions) {
 			myQuestions.add(question);
+			gameService.getPlayActivity().notifyQuestionsAdapter();
 			// zapis do db
 		}
 
@@ -371,8 +391,8 @@ public class Game implements Serializable {
 
 	}
 
-	public Player getPlayerByUUID(String uuid) {
-		for (Player player : Game.players) {
+	public Player getPlayerByUUID(String uuid, List<Player> players) {
+		for (Player player : players) {
 			if (player.getUuid().equals(uuid)) {
 				return player;
 			}
@@ -549,11 +569,42 @@ public class Game implements Serializable {
 								Game.this.addIn(com);
 							} else {
 								try {
-									PrintWriter pw = new PrintWriter(
+
+									DataOutputStream dataOutputStream = new DataOutputStream(
 											player.getCommun().socket
 													.getOutputStream());
-									pw.print(com.toString());
-									pw.flush();
+									if (com.getType() == Communicat.TYPE_PHOTO) {
+										if (!com.getPlayerUUID().equals(
+												player.getUuid())) {
+
+											dataOutputStream.writeByte(0);
+											dataOutputStream.writeUTF(com
+													.toString());
+											dataOutputStream.flush();
+
+											dataOutputStream.writeByte(1);// bajt
+																			// 1
+																			// dla
+																			// obrazka!
+
+											File fp = gameService
+													.getFileStreamPath(com
+															.getVal());
+											InputStream fileIS = new FileInputStream(
+													fp);
+											ServerCommunication.copyFile(
+													fileIS, dataOutputStream);
+											fileIS.close();
+											dataOutputStream.flush();
+
+										}
+
+									} else {
+										dataOutputStream.writeByte(0);
+										dataOutputStream.writeUTF(com
+												.toString());
+										dataOutputStream.flush();
+									}
 
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
@@ -625,7 +676,7 @@ public class Game implements Serializable {
 
 	public void finishGame() {
 		this.finished = true;
-		
+
 		if (server) {
 			threadWorking = false;
 			for (Player player : this.playersSet) {
@@ -633,9 +684,19 @@ public class Game implements Serializable {
 					if (player.getCommun() != null
 							&& player.getCommun().socket != null
 							&& !player.getCommun().socket.isClosed())
-						player.getCommun().socket.getInputStream().close();
+
+						if (player.getCommun() != null&&player.getCommun().socket.getInputStream()!=null) {
+							player.getCommun().socket.getInputStream().close();
+						}
+					if (player.getCommun() != null&&player.getCommun().socket.getOutputStream()!=null) {
 						player.getCommun().socket.getOutputStream().close();
-						player.getCommun().socket.close();
+					}
+					
+					{
+					if(player.getCommun()!=null&& player.getCommun().socket!=null){
+					player.getCommun().socket.close();
+					}
+					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -723,5 +784,18 @@ public class Game implements Serializable {
 				Game.this.myQuestions = result;
 			}
 		}
+	}
+
+	public Player getPlayerByUUID(String lastPlayerPhotoUUID) {
+		// TODO Auto-generated method stub
+		return getPlayerByUUID(lastPlayerPhotoUUID, this.playersSet);
+	}
+
+	public LinkedList<Action> getMyActions() {
+		return myActions;
+	}
+
+	public void setMyActions(LinkedList<Action> myActions) {
+		this.myActions = myActions;
 	}
 }

@@ -60,8 +60,13 @@ public class PreparePlayerAdapter extends ArrayAdapter<Player> {
 
 		textViewPlayerName.setText(p.getName());
 		textViewPlayerStatus.setText(p.getStatus());
-		
-		imageViewPlayerImage.setImageResource(R.drawable.default_icon);
+		if (p.getImage().equals(Player.DEFAULT_PHOTO)) {
+			imageViewPlayerImage.setImageResource(R.drawable.default_icon);
+		} else {
+			File fp = context.getFileStreamPath(p.getImage());
+			
+			imageViewPlayerImage.setImageDrawable(Drawable.createFromPath(fp.toString()));
+		}
 
 		return rowView;
 	}

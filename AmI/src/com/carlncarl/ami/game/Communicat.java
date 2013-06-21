@@ -1,5 +1,7 @@
 package com.carlncarl.ami.game;
 
+import android.util.Log;
+
 public class Communicat {
 
 	public static final String KOM_DELIMETER = "comend";
@@ -49,11 +51,12 @@ public class Communicat {
 			INSIDE_DELIMETER + playerUUID + 
 			INSIDE_DELIMETER + KOM_DELIMETER;
 			break;
-		case TYPE_PHOTO:
-			com = TYPE_PHOTO + 
-			INSIDE_DELIMETER + val + 
-			INSIDE_DELIMETER + KOM_DELIMETER;
-			break;
+//		case TYPE_PHOTO:
+//			com = TYPE_PHOTO + 
+//			INSIDE_DELIMETER + val + 
+//			INSIDE_DELIMETER + playerUUID + 
+//			INSIDE_DELIMETER + KOM_DELIMETER;
+//			break;
 		case TYPE_QUESTION:
 			com = type +
 			INSIDE_DELIMETER + val + 
@@ -84,8 +87,11 @@ public class Communicat {
 		if(splittedCom.length == 0){
 			return false;
 		}
+		try{
 		type = Integer.parseInt(splittedCom[0]);
-
+		} catch (NumberFormatException e) {
+			Log.d("jebalo", "zjebalo siê");
+		}
 		switch (type) {
 		case TYPE_PLAYER:
 			this.val = new String(splittedCom[1]);
