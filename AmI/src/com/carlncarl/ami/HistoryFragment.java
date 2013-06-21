@@ -63,7 +63,7 @@ public class HistoryFragment extends Fragment {
 				historyAdapter.notifyDataSetChanged();
 			} else {
 				historyList = (ListView) getView().findViewById(R.id.historyList);
-				historyAdapter = new HistoryAdapter(gService, gService.getGame().getActions());
+				historyAdapter = new HistoryAdapter(gService, gService.getGame().getMyActions());
 				historyList.setAdapter(historyAdapter);
 			}
 			

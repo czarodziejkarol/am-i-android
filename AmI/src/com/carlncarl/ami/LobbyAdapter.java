@@ -1,8 +1,10 @@
 package com.carlncarl.ami;
 
+import java.io.File;
 import java.util.LinkedList;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +50,13 @@ public class LobbyAdapter extends ArrayAdapter<Player> {
 					.getTypedCharacter());
 		}
 		textViewLobbyPlayerStatus.setText(values.get(position).getStatus());
-		imageViewLobbyPlayerImage.setImageResource(R.drawable.default_icon);
+		
+		if(values.get(position).getImage().equals(Player.DEFAULT_PHOTO)){
+			imageViewLobbyPlayerImage.setImageResource(R.drawable.default_icon);
+		} else {
+			 File filePath =context.getFileStreamPath(values.get(position).getImage());
+			 imageViewLobbyPlayerImage.setImageDrawable(Drawable.createFromPath(filePath.toString()));
+		}
 
 		return rowView;
 	}

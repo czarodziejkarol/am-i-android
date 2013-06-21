@@ -1,10 +1,10 @@
 package com.carlncarl.ami;
 
+import java.io.File;
 import java.util.LinkedList;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +42,15 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 		
 		textViewPlayerName.setText(values.get(position).getName());
 		//textViewPlayerStatus.setText(values.get(position).getStatus());
-		imageViewPlayerImage.setImageResource(R.drawable.default_icon);
+		
+		if(values.get(position).getImage().equals(Player.DEFAULT_PHOTO)){
+			imageViewPlayerImage.setImageResource(R.drawable.default_icon);
+		} else {
+			 File filePath =context.getFileStreamPath(values.get(position).getImage());
+			 imageViewPlayerImage.setImageDrawable(Drawable.createFromPath(filePath.toString()));
+		}
+		
+		
 		
 		return rowView;
 	}

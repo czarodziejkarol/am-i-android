@@ -269,8 +269,10 @@ public class PlayGameFragment extends Fragment  {
     	if(player.getUuid().equals(gService.getGame().getMe().getUuid())){
     		//dla mnie. Wpisuje pytanie
     		setVisibleState(STATE_QUESTION);
+    		notifyPlayersAdapter();
     		
     	} else {
+    		notifyPlayersAdapter();
     		//odpowiadanie na pytanie
     		setVisibleState(STATE_WAIT_ANSWERS);
     		//answerButtonsView.setVisibility(View.VISIBLE);
@@ -312,5 +314,9 @@ public class PlayGameFragment extends Fragment  {
     	
     	
     	
+	}
+
+	public void notifyQuestionsAdapter() {
+		adapterQuestion.notifyDataSetChanged();
 	}
 }

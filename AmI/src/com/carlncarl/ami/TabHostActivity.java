@@ -360,5 +360,19 @@ public class TabHostActivity extends FragmentActivity implements
 //			});
 		}
 	}
+
+	public void notifyQuestionsAdapter() {
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
+				if(playFragment.isAdded()){
+					playFragment.notifyQuestionsAdapter();
+				}
+				
+			}
+		});
+	}
 	
 }
