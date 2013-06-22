@@ -30,7 +30,8 @@
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/lobbyPlayerImg"
         android:text="name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/lobbyCharacterName"
@@ -39,15 +40,18 @@
         android:layout_alignLeft="@+id/lobbyPlayerName"
         android:layout_below="@+id/lobbyPlayerName"
         android:text="character"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/lobbyPlayerStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/lobbyPlayerImg"
         android:layout_alignLeft="@+id/lobbyCharacterName"
-        android:layout_below="@+id/lobbyCharacterName"
         android:text="status"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black"
+        android:visibility="gone" />
 
 </RelativeLayout>
