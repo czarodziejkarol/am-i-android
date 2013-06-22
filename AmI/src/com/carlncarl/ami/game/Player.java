@@ -36,6 +36,8 @@ public class Player implements Serializable{
 	private String typedCharacter;
 	private String character;
 	private LinkedList<Action> actions;
+	private int winPos;
+	
 	
 	public Player(Cursor c){
 		//device.
@@ -183,6 +185,14 @@ public class Player implements Serializable{
 	public void addAction(Action action) {
 		action.setPlayer(this);
 		actions.add(action);
+	}
+
+	public int getWinPos() {
+		return winPos;
+	}
+
+	public void setWinPos(int winPos) {
+		this.winPos = winPos;
 	}
 
 

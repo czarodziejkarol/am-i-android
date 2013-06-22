@@ -89,7 +89,7 @@ public class GameActivity extends Activity implements
 	protected void onStart() {
 		active = true;
 		super.onStart();
-		
+
 		bindService(new Intent(this, GameService.class), sConn,
 				Context.BIND_AUTO_CREATE);
 		Intent intent = new Intent(this, GameService.class);
@@ -100,12 +100,12 @@ public class GameActivity extends Activity implements
 	@Override
 	protected void onStop() {
 		active = false;
-		
-//		if (serviceConnected) {
-//			unbindService(sConn);
-//			stopService(new Intent(this, GameService.class));
-//			serviceConnected = false;
-//		}
+
+		// if (serviceConnected) {
+		// unbindService(sConn);
+		// stopService(new Intent(this, GameService.class));
+		// serviceConnected = false;
+		// }
 		super.onStop();
 	}
 
@@ -165,26 +165,25 @@ public class GameActivity extends Activity implements
 			}
 		});
 
-		Button prepareButton= (Button) findViewById(R.id.button_prepare);
+		Button prepareButton = (Button) findViewById(R.id.button_prepare);
 		prepareButton.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				startPrepareGame();
 			}
 		});
-		
+
 		Button selectButton = (Button) findViewById(R.id.buttonSelectCharacter);
 		selectButton.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				chooseCharacter();
-				
+
 			}
 		});
-		
-		
+
 		// TEST
 		Button test = (Button) findViewById(R.id.button_test);
 		test.setOnClickListener(new View.OnClickListener() {
@@ -198,8 +197,7 @@ public class GameActivity extends Activity implements
 
 		getWindow().addFlags(Window.FEATURE_NO_TITLE);
 
-		
-		viewPrepare =  (View) findViewById(R.id.viewPrepare);
+		viewPrepare = (View) findViewById(R.id.viewPrepare);
 		viewPrepare.setVisibility(View.INVISIBLE);
 		viewSearchGames = (View) findViewById(R.id.viewSearchGames);
 		viewCreateGame = (View) findViewById(R.id.viewCreateGame);
@@ -215,13 +213,14 @@ public class GameActivity extends Activity implements
 	}
 
 	protected void chooseCharacter() {
-		if(characterText.getText()!= null && 
-				!characterText.getText().toString().equals("")){
+		if (characterText.getText() != null
+				&& !characterText.getText().toString().equals("")) {
 			gService.chooseCharacter(characterText.getText().toString());
 		} else {
-			Toast.makeText(this, "Choose character name!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Choose character name!", Toast.LENGTH_SHORT)
+					.show();
 		}
-			
+
 	}
 
 	protected void startPrepareGame() {
@@ -235,10 +234,10 @@ public class GameActivity extends Activity implements
 	protected void createGame() {
 		gService.createGame(editGameName.getText().toString(), player);
 	}
-	
-	public void prepareGame(){
+
+	public void prepareGame() {
 		this.runOnUiThread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
@@ -247,7 +246,7 @@ public class GameActivity extends Activity implements
 				preAdapter.notifyDataSetChanged();
 			}
 		});
-		
+
 	}
 
 	protected void hideViewCreateGame() {
@@ -258,14 +257,17 @@ public class GameActivity extends Activity implements
 				viewCreateGame.setVisibility(View.GONE);
 				viewSearchGames.setVisibility(View.GONE);
 				viewJoinedPlayers.setVisibility(View.VISIBLE);
-				if(!GameActivity.this.player.getImage().equals(Player.DEFAULT_PHOTO)){
+				if (!GameActivity.this.player.getImage().equals(
+						Player.DEFAULT_PHOTO)) {
 					ImageView imv = (ImageView) findViewById(R.id.imageViewMe);
-					
-					File fp =GameActivity.this.getFileStreamPath(GameActivity.this.player.getImage());
-							
+
+					File fp = GameActivity.this
+							.getFileStreamPath(GameActivity.this.player
+									.getImage());
+
 					imv.setImageDrawable(Drawable.createFromPath(fp.toString()));
 				}
-				
+
 			}
 		});
 
@@ -314,7 +316,8 @@ public class GameActivity extends Activity implements
 				result[i] = c.getString(c
 						.getColumnIndex(Database.Character.COLUMN_NAME_NAME));
 			}
-
+			c.close();
+			db.close();
 			return result;
 
 		}
@@ -368,7 +371,7 @@ public class GameActivity extends Activity implements
 			@Override
 			public void run() {
 				adapter.notifyDataSetChanged();
-				
+
 			}
 		});
 
@@ -394,37 +397,38 @@ public class GameActivity extends Activity implements
 			}
 		});
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.test, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.test, menu);
+		return true;
 	}
-	
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.item_exit:
-	            exitGame();
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.item_exit:
+			exitGame();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private void exitGame() {
 		unbindService(sConn);
-		
+
 		boolean isBound = false;
-		isBound = getApplicationContext().bindService( new Intent(getApplicationContext(), GameService.class), sConn, Context.BIND_AUTO_CREATE );
+		isBound = getApplicationContext().bindService(
+				new Intent(getApplicationContext(), GameService.class), sConn,
+				Context.BIND_AUTO_CREATE);
 
 		if (isBound)
-		    getApplicationContext().unbindService(sConn);
+			getApplicationContext().unbindService(sConn);
 		gService.stopService(new Intent(this, GameService.class));
-		
+
 		finish();
 	}
 

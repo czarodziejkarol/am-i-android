@@ -23,11 +23,14 @@ public class Communicat {
 	public static final int TYPE_QUESTION = 8;
 	public static final int TYPE_ANSWER_SERVER = 9;
 	public static final int TYPE_ANSWER = 10;
+	public static final int TYPE_AM_I = 11;
+	public static final int TYPE_PLAYER_GUESS = 12;
 
 	private int type;
 	private String playerUUID;
 	private String playerName;
 	private String val;
+	private String val2;
 	private int number;
 	private String image;
 	//private
@@ -67,6 +70,14 @@ public class Communicat {
 		case TYPE_ANSWER:
 			com = type +
 			INSIDE_DELIMETER + val + 
+			INSIDE_DELIMETER + number + 
+			INSIDE_DELIMETER + playerUUID + 
+			INSIDE_DELIMETER + KOM_DELIMETER;
+			break;
+		case TYPE_PLAYER_GUESS:
+			com = type +
+			INSIDE_DELIMETER + val + 
+			INSIDE_DELIMETER + val2 + 
 			INSIDE_DELIMETER + number + 
 			INSIDE_DELIMETER + playerUUID + 
 			INSIDE_DELIMETER + KOM_DELIMETER;
@@ -113,6 +124,12 @@ public class Communicat {
 			this.val = new String(splittedCom[1]);
 			this.number = Integer.parseInt(splittedCom[2]);
 			this.playerUUID = new String(splittedCom[3]);
+			break;
+		case TYPE_PLAYER_GUESS:
+			this.val = new String(splittedCom[1]);
+			this.val2 = new String(splittedCom[2]);
+			this.number = Integer.parseInt(splittedCom[3]);
+			this.playerUUID = new String(splittedCom[4]);
 			break;
 		default:
 			this.val = new String(splittedCom[1]);
@@ -170,6 +187,14 @@ public class Communicat {
 
 	public void setNumber(int number) {
 		this.number = number;
+	}
+
+	public String getVal2() {
+		return val2;
+	}
+
+	public void setVal2(String val2) {
+		this.val2 = val2;
 	}
 
 

@@ -391,14 +391,33 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 	}
 
 	public void startTurn(Player player) {
+		waitForPlayActivity();
 		playActivity.startNewTurn(player);
 	}
 
+	private void waitForPlayActivity() {
+		while(playActivity==null){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void playerGuess(Action action) {
+		waitForPlayActivity();
+		playActivity.playerGuess(action);
+	}
+
 	public void receveQuestion(Action action) {
+		waitForPlayActivity();
 		playActivity.receiveAction(action);
 	}
 
 	public void receiveAnswer(Action action) {
+		waitForPlayActivity();
 		playActivity.receiveAction(action);
 	}
 
@@ -421,5 +440,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		Toast.makeText(this, "STOP SERVICE", Toast.LENGTH_LONG).show();
 		return super.stopService(name);
 	}
+
+
 
 }
