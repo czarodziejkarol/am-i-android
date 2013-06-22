@@ -305,7 +305,8 @@ public class Game implements Serializable {
 
 	private void receivePlayerGuess(Communicat com) {
 		Player p = getPlayerByUUID(com.getPlayerUUID(), Game.players);
-		if (com.getVal2() != null && !com.getVal2().equals("0")) {
+		if (com.getVal2() != null && !com.getVal2().equals("null")
+				&& !com.getVal2().equals("0")) {
 			p.setWinPos(Integer.parseInt(com.getVal2()));
 		}
 		Action action = new Action();
@@ -580,8 +581,52 @@ public class Game implements Serializable {
 	public void endTurn() {
 
 		// przejœcie do nastêpnego gracza
-		Game.players.addLast(Game.players.removeFirst());
-		startTurn();
+		boolean koniec = true;
+
+		for (Player player : Game.players) {
+			if (player.getWinPos() == 0) {
+				koniec = false;
+			}
+		}
+
+		if (koniec) {
+			endGame();
+		} else {
+
+			//
+			// Player r = Game.players.removeFirst();
+			// while(r.getWinPos() != 0){
+			// Game.players.addLast(r);
+			// r = Game.players.removeFirst();
+			// }
+			// Game.players.addLast(r);
+
+			Player p = Game.players.removeFirst();
+			Game.players.addLast(p);
+
+			
+			
+			while (Game.players.getFirst().getWinPos()!=0) {
+				p = Game.players.removeFirst();
+				Game.players.addLast(p);
+			}
+			
+//
+//			do {
+//				p = Game.players.removeFirst();
+//				Game.players.addLast(p);
+//			} while (p.getWinPos() != 0);
+//			while (p == null || p.getWinPos() != 0) {
+//
+//			}
+
+			startTurn();
+		}
+
+	}
+
+	private void endGame() {
+
 	}
 
 	public void sendCommunicat(Communicat com) {
