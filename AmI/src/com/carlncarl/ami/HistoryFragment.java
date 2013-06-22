@@ -1,8 +1,5 @@
 package com.carlncarl.ami;
 
-import com.carlncarl.ami.PlayGameFragment.PlayTabInterface;
-import com.carlncarl.ami.game.Game;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +13,8 @@ import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.carlncarl.ami.game.Game;
 
 /**
  * @author mwho
@@ -105,7 +104,7 @@ public class HistoryFragment extends Fragment {
 			case Game.GAME_STATUS_WRITE_QUESTION:
 				viewIAm.setVisibility(View.VISIBLE);
 				break;
-			case Game.GAME_STATUS_TYPE_ANSWER:
+			default:
 				viewIAm.setVisibility(View.GONE);
 				break;
 			}

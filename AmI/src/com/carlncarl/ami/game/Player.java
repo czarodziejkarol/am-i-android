@@ -36,7 +36,7 @@ public class Player implements Serializable{
 	private String typedCharacter;
 	private String character;
 	private LinkedList<Action> actions;
-	private int winPos;
+	private int winPos = 0;
 	
 	
 	public Player(Cursor c){

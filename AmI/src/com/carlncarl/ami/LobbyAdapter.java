@@ -47,7 +47,7 @@ public class LobbyAdapter extends ArrayAdapter<Player> {
 			textViewLobbyPlayerHero.setVisibility(View.INVISIBLE);
 		} else {
 			textViewLobbyPlayerHero.setText(values.get(position)
-					.getTypedCharacter());
+					.getCharacter());
 		}
 		textViewLobbyPlayerStatus.setText(values.get(position).getStatus());
 		
