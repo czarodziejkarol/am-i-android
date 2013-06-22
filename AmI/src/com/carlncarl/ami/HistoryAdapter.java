@@ -5,9 +5,11 @@ import java.util.LinkedList;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,32 +45,62 @@ public class HistoryAdapter extends ArrayAdapter<Action> {
 			
 			View rowView = inflater.inflate(R.layout.history_view, parent, false);
 			TextView textHistoryAskedQuestion = (TextView) rowView.findViewById(R.id.textHistoryAskedQuestion);
+			ImageView textBackYes = (ImageView) rowView.findViewById(R.id.imageHistory2);
 			//TextView textViewPlayerStatus = (TextView) rowView.findViewById(R.id.textViewPlayerStatus);
 			TextView historyAnswers = (TextView) rowView.findViewById(R.id.historyAnswers);
 			
-			textHistoryAskedQuestion.setText(values.get(position).getValue());
 			
-			for (Action ans : values.get(position).getChilds()) {
-				switch (Integer.parseInt(ans.getValue())) {
-				case Game.ANSWER_YES:
-					yes++;
-					break;
-				case Game.ANSWER_NO:
-					no++;
-					break;
-	
-					
-					
-				default:
-					
-					dont++;
-					
-					break;
+			switch (values.get(position).getType()) {
+			
+			case Action.ACTION_QUESTION:
+				
+				textHistoryAskedQuestion.setText(values.get(position).getValue());
+				
+				for (Action ans : values.get(position).getChilds()) {
+					switch (Integer.parseInt(ans.getValue())) {
+					case Game.ANSWER_YES:
+						yes++;
+						break;
+					case Game.ANSWER_NO:
+						no++;
+						break;
+		
+						
+						
+					default:
+						
+						dont++;
+						
+						break;
+					}
 				}
+				historyAnswers.setText("Yes: "+yes+" No: "+no+" ?:"+dont);
+				//textViewPlayerName.setText(values.get(position).getName());
+				//textViewPlayerStatus.setText(values.get(position).getStatus());
+				
+				break;
+			case Action.ACTION_GUESS:
+				
+				Action a = values.get(position);
+				textHistoryAskedQuestion.setText("Am I "+ a.getValue()+ "?");
+				
+				if(a.getValue().equalsIgnoreCase(a.getPlayer().getCharacter())){
+					historyAnswers.setText("YES");
+					textBackYes.setImageDrawable(context.getResources().getDrawable(R.drawable.dymek_lewy_tak));
+				} else{
+					historyAnswers.setText("NO");
+					textBackYes.setImageDrawable(context.getResources().getDrawable(R.drawable.dymek_lewy_nie));
+				}
+				
+				
+				
+				
+				break;
+			
+			
 			}
-			historyAnswers.setText("Yes: "+yes+" No: "+no+" ?:"+dont);
-			//textViewPlayerName.setText(values.get(position).getName());
-			//textViewPlayerStatus.setText(values.get(position).getStatus());
+			
+			
 			
 			
 			return rowView;
