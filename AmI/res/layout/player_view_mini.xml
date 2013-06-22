@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/player_view_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:maxWidth="60dp"
+        android:maxHeight="60dp"
         android:layout_marginLeft="7dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/ramka_zdj_kolejka"
