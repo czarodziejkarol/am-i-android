@@ -71,7 +71,7 @@ public class Game implements Serializable {
 	public WifiP2pInfo info;
 
 	GameActivity activity;
-
+	private int winNumber = 1;
 	private boolean server;
 	private boolean threadWorking = true;
 
@@ -104,33 +104,33 @@ public class Game implements Serializable {
 
 				}
 				Log.d("AML", "WYSTARTOWANO SERWER");
-//				new Thread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						try {
-//							while (threadWorking) {
-//								Thread.sleep(2000);
-//								String status = "";
-//								if (serverSocket != null) {
-//									if (serverSocket.isBound()) {
-//										status += "bound ";
-//									}
-//									if (serverSocket.isClosed()) {
-//										status += "closed";
-//									}
-//								} else {
-//									status = "NULL";
-//								}
-//
-//								Log.d("STATUS SERWERA", status);
-//							}
-//						} catch (InterruptedException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//					}
-//				}).start();
+				// new Thread(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// try {
+				// while (threadWorking) {
+				// Thread.sleep(2000);
+				// String status = "";
+				// if (serverSocket != null) {
+				// if (serverSocket.isBound()) {
+				// status += "bound ";
+				// }
+				// if (serverSocket.isClosed()) {
+				// status += "closed";
+				// }
+				// } else {
+				// status = "NULL";
+				// }
+				//
+				// Log.d("STATUS SERWERA", status);
+				// }
+				// } catch (InterruptedException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+				// }
+				// }).start();
 				new Thread(new Runnable() {
 
 					@Override
@@ -233,11 +233,11 @@ public class Game implements Serializable {
 	}
 
 	public synchronized Player addIn(Communicat com) {
-		 synchronized (inCommunicats) {
-		//
-			 inCommunicats.add(com);
-		 }
-		 Log.d("COMMUNICAT:", com.toString());
+		synchronized (inCommunicats) {
+			//
+			inCommunicats.add(com);
+		}
+		Log.d("COMMUNICAT:", com.toString());
 		switch (com.getType()) {
 		case Communicat.TYPE_DEVICE_ID:
 			try {
@@ -291,10 +291,54 @@ public class Game implements Serializable {
 		case Communicat.TYPE_ANSWER:
 			receiveAnswer(com);
 			break;
+		case Communicat.TYPE_AM_I:
+			receiveAmIType(com);
+			break;
+		case Communicat.TYPE_PLAYER_GUESS:
+			receivePlayerGuess(com);
+			break;
 		default:
 			break;
 		}
 		return null;
+	}
+
+	private void receivePlayerGuess(Communicat com) {
+		Player p = getPlayerByUUID(com.getPlayerUUID(), Game.players);
+		if (com.getVal2() != null && !com.getVal2().equals("0")) {
+			p.setWinPos(Integer.parseInt(com.getVal2()));
+		}
+		Action action = new Action();
+		action.setType(Action.ACTION_GUESS);
+		action.setNumber(com.getNumber());
+		action.setPlayer(p);
+		action.setValue(com.getVal());
+		if (action.getPlayer().getUuid().equals(me.getUuid())) {
+			myActions.add(action);
+		}
+		actions.add(action);
+
+		gameService.playerGuess(action);
+
+	}
+
+	private void receiveAmIType(Communicat com) {
+		Player p = getPlayerByUUID(com.getPlayerUUID(), Game.players);
+		Communicat sCom = new Communicat();
+		sCom.setVal(com.getVal());
+		sCom.setType(Communicat.TYPE_PLAYER_GUESS);
+
+		if (p.getCharacter().equalsIgnoreCase(com.getVal())) {
+			p.setWinPos(winNumber++);
+			// ustawiæ ¿e dobry
+			sCom.setVal2(p.getWinPos() + "");
+		}
+
+		sCom.setNumber(number++);
+		sCom.setPlayerUUID(com.getPlayerUUID());
+		sendCommunicat(sCom);
+
+		endTurn();
 	}
 
 	private void setPlayerPhoto(Communicat com) {
@@ -340,6 +384,7 @@ public class Game implements Serializable {
 		Player p = getPlayerByUUID(com.getPlayerUUID(), Game.players);
 		Action action = new Action();
 		lastQuestion = action;
+		action.setType(Action.ACTION_QUESTION);
 		action.setNumber(com.getNumber());
 		action.setValue(question);
 		p.addAction(action);
@@ -402,6 +447,8 @@ public class Game implements Serializable {
 
 	private void typePlayer(Communicat com) {
 		Player p = new Player(com);
+		p.setMe(p.getUuid().equals(me.getUuid()));
+
 		players.add(p);
 	}
 
@@ -530,10 +577,6 @@ public class Game implements Serializable {
 		}
 	}
 
-	public void askQuestion(Communicat com) {
-
-	}
-
 	public void endTurn() {
 
 		// przejœcie do nastêpnego gracza
@@ -638,22 +681,6 @@ public class Game implements Serializable {
 		return myQuestions;
 	}
 
-	public void sendAskedQuestion(String question) {
-		Communicat com = new Communicat();
-		com.setType(Communicat.TYPE_QUESTION_ASKED);
-		com.setVal(question);
-		com.setPlayerUUID(me.getUuid());
-		sendToServerCommunicat(com);
-	}
-
-	public void sendAnswerToServer(int answer) {
-		Communicat com = new Communicat();
-		com.setType(Communicat.TYPE_ANSWER_SERVER);
-		com.setVal(Integer.toString(answer));
-		com.setPlayerUUID(me.getUuid());
-		sendToServerCommunicat(com);
-	}
-
 	public LinkedList<Action> getActions() {
 		return actions;
 	}
@@ -685,17 +712,20 @@ public class Game implements Serializable {
 							&& player.getCommun().socket != null
 							&& !player.getCommun().socket.isClosed())
 
-						if (player.getCommun() != null&&player.getCommun().socket.getInputStream()!=null) {
+						if (player.getCommun() != null
+								&& player.getCommun().socket.getInputStream() != null) {
 							player.getCommun().socket.getInputStream().close();
 						}
-					if (player.getCommun() != null&&player.getCommun().socket.getOutputStream()!=null) {
+					if (player.getCommun() != null
+							&& player.getCommun().socket.getOutputStream() != null) {
 						player.getCommun().socket.getOutputStream().close();
 					}
-					
+
 					{
-					if(player.getCommun()!=null&& player.getCommun().socket!=null){
-					player.getCommun().socket.close();
-					}
+						if (player.getCommun() != null
+								&& player.getCommun().socket != null) {
+							player.getCommun().socket.close();
+						}
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -797,5 +827,29 @@ public class Game implements Serializable {
 
 	public void setMyActions(LinkedList<Action> myActions) {
 		this.myActions = myActions;
+	}
+
+	public void sendAskedQuestion(String question) {
+		Communicat com = new Communicat();
+		com.setType(Communicat.TYPE_QUESTION_ASKED);
+		com.setVal(question);
+		com.setPlayerUUID(me.getUuid());
+		sendToServerCommunicat(com);
+	}
+
+	public void sendAnswerToServer(int answer) {
+		Communicat com = new Communicat();
+		com.setType(Communicat.TYPE_ANSWER_SERVER);
+		com.setVal(Integer.toString(answer));
+		com.setPlayerUUID(me.getUuid());
+		sendToServerCommunicat(com);
+	}
+
+	public void sendTypeMyCharacter(String character) {
+		Communicat com = new Communicat();
+		com.setType(Communicat.TYPE_AM_I);
+		com.setVal(character);
+		com.setPlayerUUID(me.getUuid());
+		sendToServerCommunicat(com);
 	}
 }

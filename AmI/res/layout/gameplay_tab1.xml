@@ -6,27 +6,26 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="vertical" >
+
+        <com.carlncarl.ami.HorizontialListView
+            android:id="@+id/listview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="10dp" >
+        </com.carlncarl.ami.HorizontialListView>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/answerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="vertical" >
-
-            <com.carlncarl.ami.HorizontialListView
-                android:id="@+id/listview"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginTop="10dp" >
-
-            </com.carlncarl.ami.HorizontialListView>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"

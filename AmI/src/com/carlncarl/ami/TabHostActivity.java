@@ -20,14 +20,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
+import android.widget.Toast;
 
+import com.carlncarl.ami.HistoryFragment.HistoryTabInterface;
 import com.carlncarl.ami.PlayGameFragment.PlayTabInterface;
 import com.carlncarl.ami.game.Action;
 import com.carlncarl.ami.game.Game;
 import com.carlncarl.ami.game.Player;
 
 public class TabHostActivity extends FragmentActivity implements
-		TabHost.OnTabChangeListener, PlayTabInterface {
+		TabHost.OnTabChangeListener, PlayTabInterface ,HistoryTabInterface {
 	private TabHost mTabHost;
 	private Game game;
 	private HashMap<String, TabInfo> mapTabInfo = new HashMap<String, TabInfo>();
@@ -319,8 +321,7 @@ public class TabHostActivity extends FragmentActivity implements
 
 	@Override
 	public void onTypeMyCharacter(String character) {
-		// TODO Auto-generated method stub
-		
+		game.sendTypeMyCharacter(character);
 	}
 
 	public void startNewTurn(final Player p){
@@ -371,6 +372,16 @@ public class TabHostActivity extends FragmentActivity implements
 					playFragment.notifyQuestionsAdapter();
 				}
 				
+			}
+		});
+	}
+
+	public void playerGuess(final Action action) {
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Toast.makeText(TabHostActivity.this, action.getPlayer().getName()+ " guessed "+action.getValue()+" Position"+action.getPlayer().getWinPos(), Toast.LENGTH_SHORT).show();
 			}
 		});
 	}

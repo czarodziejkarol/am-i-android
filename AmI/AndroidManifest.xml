@@ -26,14 +26,17 @@
         <activity
             android:name="com.carlncarl.ami.LoadActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize" 
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.carlncarl.ami.GameActivity" >
+        <activity android:name="com.carlncarl.ami.GameActivity" 
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
         </activity>
 
         <service
@@ -45,12 +48,14 @@
         <activity
             android:name="com.carlncarl.ami.TabHostActivity"
             android:label="@string/title_activity_tabhost"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.carlncarl.ami.PrepareGameActivity"
             android:label="@string/title_activity_prepare_game"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 

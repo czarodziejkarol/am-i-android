@@ -124,6 +124,7 @@ Button buttona = (Button) findViewById(R.id.buttonMyProfile);
             if (c.getCount() != 0) {
                 p = new Player(c);
             }
+            c.close();
             db.close();
             return p;
 
@@ -163,6 +164,7 @@ Button buttona = (Button) findViewById(R.id.buttonMyProfile);
             long newRowId;
             newRowId = db.insert(Database.Player.TABLE_NAME, null, values);
             Player p = new Player(myUUID,params[0],params[1]);
+            db.close();
             return p;
 
         }
