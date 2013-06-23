@@ -14,12 +14,13 @@
 
     <TextView
         android:id="@+id/player_view_name"
-        android:layout_width="wrap_content"
+        android:layout_width="71dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/player_view_image"
         android:layout_marginBottom="9dp"
         android:layout_marginLeft="9dp"
-        android:text="Small Text"
+        android:background="#AAAAFFBB"
+        android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>
