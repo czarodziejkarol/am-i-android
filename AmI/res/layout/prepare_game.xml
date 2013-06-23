@@ -5,24 +5,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <AutoCompleteTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:ems="10"
-                android:id="@+id/autoCompleteTextViewChooseCharacter"
-                android:hint="@string/type_char_name"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextViewChooseCharacter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/type_char_name" >
+
+            <requestFocus />
+        </AutoCompleteTextView>
+
+        <Button
+            android:id="@+id/buttonSelectCharacter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/mini_button"
+            android:text="@string/select"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
     
     <ListView
         android:id="@+id/listViewPrepare"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent" >
     </ListView>
-
-    <Button
-        android:id="@+id/buttonSelectCharacter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/select" />
 
 </LinearLayout>

@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/imageViewPlayerImage"
-        android:maxWidth="80dp"
-        android:maxHeight="80dp" />
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"

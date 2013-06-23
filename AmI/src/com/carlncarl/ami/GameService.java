@@ -113,43 +113,6 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		}
 	}
 
-	public void hideSth() {
-		new DoAsync().execute("");
-	}
-
-	private class DoAsync extends AsyncTask<String, Integer, String> {
-
-		@SuppressLint("ShowToast")
-		@Override
-		protected String doInBackground(String... params) {
-			int i = 0;
-			while (i < 20) {
-				try {
-					publishProgress(i);
-					Thread.sleep(100);
-					i++;
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			return "bronek";
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			Toast.makeText(gameActivity, "POWIADOMIENIE " + values[0],
-					Toast.LENGTH_SHORT).show();
-			super.onProgressUpdate(values);
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			gameActivity.hideTestButton();
-			super.onPostExecute(result);
-		}
-	}
 
 	@Override
 	public void onPeersAvailable(WifiP2pDeviceList peers) {

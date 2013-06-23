@@ -62,6 +62,8 @@ public class GameActivity extends Activity implements
 	private View viewCreateGame;
 	private View viewJoinedPlayers;
 	private View viewPrepare;
+	
+	private Button selectButton;
 
 	private GameService gService = null;
 	private boolean serviceConnected = false;
@@ -174,7 +176,7 @@ public class GameActivity extends Activity implements
 			}
 		});
 
-		Button selectButton = (Button) findViewById(R.id.buttonSelectCharacter);
+		selectButton = (Button) findViewById(R.id.buttonSelectCharacter);
 		selectButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -184,16 +186,7 @@ public class GameActivity extends Activity implements
 			}
 		});
 
-		// TEST
-		Button test = (Button) findViewById(R.id.button_test);
-		test.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				gService.hideSth();
-
-			}
-		});
 
 		getWindow().addFlags(Window.FEATURE_NO_TITLE);
 
@@ -204,9 +197,9 @@ public class GameActivity extends Activity implements
 		viewJoinedPlayers = (View) findViewById(R.id.viewJoinigPlayers);
 		if (game.isServer()) {
 			viewCreateGame.setVisibility(View.VISIBLE);
-			viewSearchGames.setVisibility(View.INVISIBLE);
+			viewSearchGames.setVisibility(View.GONE);
 		} else {
-			viewCreateGame.setVisibility(View.INVISIBLE);
+			viewCreateGame.setVisibility(View.GONE);
 			viewSearchGames.setVisibility(View.VISIBLE);
 		}
 
@@ -353,17 +346,6 @@ public class GameActivity extends Activity implements
 		this.gService = gService;
 	}
 
-	public void hideTestButton() {
-		this.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				Button test = (Button) findViewById(R.id.button_test);
-				test.setVisibility(View.GONE);
-			}
-		});
-
-	}
 
 	public void notifyAdapter() {
 		this.runOnUiThread(new Runnable() {
