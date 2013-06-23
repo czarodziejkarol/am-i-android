@@ -9,6 +9,7 @@
         android:id="@+id/viewIAm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/tab2_panel"
         android:columnCount="2"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
