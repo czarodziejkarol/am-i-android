@@ -2,14 +2,10 @@ package com.carlncarl.ami;
 
 import java.util.LinkedList;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;

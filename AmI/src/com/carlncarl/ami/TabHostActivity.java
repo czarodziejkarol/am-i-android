@@ -24,12 +24,14 @@ import android.widget.Toast;
 
 import com.carlncarl.ami.HistoryFragment.HistoryTabInterface;
 import com.carlncarl.ami.PlayGameFragment.PlayTabInterface;
+import com.carlncarl.ami.SettingsFragment.SettingsTabInterface;
 import com.carlncarl.ami.game.Action;
 import com.carlncarl.ami.game.Game;
 import com.carlncarl.ami.game.Player;
 
 public class TabHostActivity extends FragmentActivity implements
-		TabHost.OnTabChangeListener, PlayTabInterface ,HistoryTabInterface {
+		TabHost.OnTabChangeListener, PlayTabInterface ,HistoryTabInterface,
+		SettingsTabInterface{
 	private TabHost mTabHost;
 	private Game game;
 	private HashMap<String, TabInfo> mapTabInfo = new HashMap<String, TabInfo>();
@@ -193,7 +195,7 @@ public class TabHostActivity extends FragmentActivity implements
 				this.mTabHost.newTabSpec("Tab4").setIndicator(
 						prepareTabView(this,
 								R.drawable.button_panel_corner_right)),
-				(tabInfo = new TabInfo("Tab4", Tab4Fragment.class, args)));
+				(tabInfo = new TabInfo("Tab4", SettingsFragment.class, args)));
 		this.mapTabInfo.put(tabInfo.tag, tabInfo);
 		// Default to first tab
 		this.onTabChanged("Tab1");
@@ -384,6 +386,22 @@ public class TabHostActivity extends FragmentActivity implements
 				Toast.makeText(TabHostActivity.this, action.getPlayer().getName()+ " guessed "+action.getValue()+" Position"+action.getPlayer().getWinPos(), Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	@Override
+	public void changeSettingsQuestions(boolean saveQuestions) {
+		game.setSaveQuestions(saveQuestions);
+		
+	}
+
+	@Override
+	public void changeSettingsSound(boolean sounds) {
+		game.setSounds(sounds);
+	}
+
+	@Override
+	public void leaveGame() {
+		exitGame();
 	}
 	
 }
