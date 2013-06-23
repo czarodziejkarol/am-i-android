@@ -19,7 +19,8 @@
         android:layout_alignBottom="@+id/player_view_image"
         android:layout_marginBottom="9dp"
         android:layout_marginLeft="9dp"
-        android:background="#AAAAFFBB"
+        android:background="#D1FFCC00"
+        android:textColor="#000000"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
