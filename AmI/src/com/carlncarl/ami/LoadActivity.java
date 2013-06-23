@@ -69,8 +69,8 @@ Button buttona = (Button) findViewById(R.id.buttonMyProfile);
 				
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getBaseContext(),TabHostActivity.class);
-                
+				Intent intent = new Intent(getBaseContext(),ProfileActivity.class);
+				intent.putExtra(GameActivity.PLAYER_KEY, player);
                 startActivity(intent);
 			}
 		});
