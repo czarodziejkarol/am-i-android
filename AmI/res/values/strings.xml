@@ -55,5 +55,8 @@
     <string name="check">Check</string>
     <string name="hintIAm">Try to guess your character</string>
     <string name="hist_i_am">Guess your character</string>
+    <string name="save_questions">Save questions</string>
+    <string name="sounds">Sounds</string>
+    <string name="leave_game">Leave game</string>
 
 </resources>

@@ -76,6 +76,7 @@ public class Game implements Serializable {
 	private boolean threadWorking = true;
 
 	private boolean saveQuestions = true;
+	private boolean sounds = true;
 
 	private GameService gameService;
 
@@ -394,9 +395,10 @@ public class Game implements Serializable {
 			myActions.add(action);
 		}
 
-		if (this.saveQuestions) {
+		if (this.saveQuestions && !myQuestions.contains(question)) {
 			myQuestions.add(question);
 			gameService.getPlayActivity().notifyQuestionsAdapter();
+
 			// zapis do db
 		}
 
@@ -604,21 +606,19 @@ public class Game implements Serializable {
 			Player p = Game.players.removeFirst();
 			Game.players.addLast(p);
 
-			
-			
-			while (Game.players.getFirst().getWinPos()!=0) {
+			while (Game.players.getFirst().getWinPos() != 0) {
 				p = Game.players.removeFirst();
 				Game.players.addLast(p);
 			}
-			
-//
-//			do {
-//				p = Game.players.removeFirst();
-//				Game.players.addLast(p);
-//			} while (p.getWinPos() != 0);
-//			while (p == null || p.getWinPos() != 0) {
-//
-//			}
+
+			//
+			// do {
+			// p = Game.players.removeFirst();
+			// Game.players.addLast(p);
+			// } while (p.getWinPos() != 0);
+			// while (p == null || p.getWinPos() != 0) {
+			//
+			// }
 
 			startTurn();
 		}
@@ -896,5 +896,13 @@ public class Game implements Serializable {
 		com.setVal(character);
 		com.setPlayerUUID(me.getUuid());
 		sendToServerCommunicat(com);
+	}
+
+	public boolean isSounds() {
+		return sounds;
+	}
+
+	public void setSounds(boolean sounds) {
+		this.sounds = sounds;
 	}
 }

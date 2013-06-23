@@ -3,6 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pure_background"
+    android:padding="10dp"
     android:orientation="vertical" >
+
+    <CheckBox
+        android:id="@+id/checkBoxSaveQuestions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save_questions" />
+
+    <CheckBox
+        android:id="@+id/checkBoxSounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sounds" />
+
+    <Button
+        android:id="@+id/buttonLeaveGane"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button"
+        android:text="@string/leave_game"
+        android:textColor="#FFFFFF" />
 
 </LinearLayout>
