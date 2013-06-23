@@ -6,8 +6,6 @@
 
     <ImageView
         android:id="@+id/imageViewPlayerImage"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
         android:maxWidth="80dp"
         android:maxHeight="80dp" />
 
@@ -32,9 +30,9 @@
 
     <Button
         android:id="@+id/button_connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/mini_button"
+        android:layout_width="80dp"
+        android:layout_height="32dp"
+        android:background="@drawable/button"
         android:text="@string/connect"
         android:textColor="#ffffff" />
 
