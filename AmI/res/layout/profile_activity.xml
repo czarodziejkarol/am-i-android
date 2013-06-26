@@ -51,12 +51,6 @@
     </GridLayout>
 
     <CheckBox
-        android:id="@+id/checkBoxSoundsProfil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sounds" />
-
-    <CheckBox
         android:id="@+id/checkBoxSaveAskProfil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
