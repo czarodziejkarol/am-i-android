@@ -50,7 +50,7 @@ public class LobbyAdapter extends ArrayAdapter<Player> {
 					.getCharacter());
 		}
 		if(values.get(position).getWinPos() > 0)
-		textViewLobbyPlayerStatus.setText("Win in " + values.size() + " round");
+		textViewLobbyPlayerStatus.setText("Win in " + values.get(position).getActions().size() + " round");
 		else{
 			textViewLobbyPlayerStatus.setVisibility(View.INVISIBLE);
 		} 
