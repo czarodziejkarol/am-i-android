@@ -5,63 +5,42 @@
     android:layout_marginTop="10dp"
     android:paddingTop="15dp" >
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/textHistoryAskedQuestion"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/dymek_prawy" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_weight="0.04"
+        android:background="@drawable/dymek_prawy"
+        android:paddingBottom="50dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:text="test test test test test testtest testtest testtest testtest testtest testtest testtest testtest testtest testtest test"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000000" />
 
     <ImageView
         android:id="@+id/imageHistory2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageView1"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="75dp"
+        android:layout_alignBottom="@+id/textHistoryAskedQuestion"
+        android:layout_alignLeft="@+id/textHistoryAskedQuestion"
+        android:layout_marginBottom="-25dp"
+        android:layout_marginLeft="15dp"
         android:src="@drawable/dymek_lewy" />
-
-    <ScrollView
-        android:id="@+id/HistoryScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@+id/imageView1"
-        android:layout_alignRight="@+id/imageView1"
-        android:layout_marginBottom="400dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="7dp"
-        android:overScrollMode="never" >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/textHistoryAskedQuestion"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.04"
-                        android:text="@string/asdtestlong"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-                </LinearLayout>
-
-            </ScrollView>
 
     <TextView
         android:id="@+id/historyAnswers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageView1"
         android:layout_alignRight="@+id/imageHistory2"
         android:layout_alignTop="@+id/imageHistory2"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="3dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:text="Tak : 0, Nie : 10, ? : 0"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000000" />
 
 </RelativeLayout>

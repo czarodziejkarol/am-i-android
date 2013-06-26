@@ -29,7 +29,6 @@ public class ProfileActivity extends Activity {
 	private EditText editPlayerName;
 	private ImageView imageViewProfile;
 	private Button buttonSaveSettings;
-	private CheckBox boxSound;
 	private CheckBox boxQuest;
 
 	@Override
@@ -50,7 +49,6 @@ public class ProfileActivity extends Activity {
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		editPlayerName = (EditText) findViewById(R.id.editTextUsernameProfil);
-		boxSound = (CheckBox) findViewById(R.id.checkBoxSoundsProfil);
 		boxQuest = (CheckBox) findViewById(R.id.checkBoxSaveAskProfil);
 		imageViewProfile = (ImageView) findViewById(R.id.imageViewPlayerIconProfil);
 
