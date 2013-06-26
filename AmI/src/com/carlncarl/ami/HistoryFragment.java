@@ -77,7 +77,7 @@ public class HistoryFragment extends Fragment {
 
 	protected void guessMyCharacter() {
 		callback.onTypeMyCharacter(editTextIAm.getText().toString());
-
+		viewIAm.setVisibility(View.GONE);
 		editTextIAm.setText("");
 		InputMethodManager mgr = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);

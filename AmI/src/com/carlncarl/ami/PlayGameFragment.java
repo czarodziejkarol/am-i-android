@@ -308,6 +308,9 @@ public class PlayGameFragment extends Fragment {
 			answerLayout.setVisibility(View.GONE);
 			break;
 		default:
+			waitingLayout.setVisibility(View.GONE);
+			questionLayout.setVisibility(View.GONE);
+			answerLayout.setVisibility(View.GONE);
 			break;
 		}
 
@@ -315,5 +318,9 @@ public class PlayGameFragment extends Fragment {
 
 	public void notifyQuestionsAdapter() {
 		adapterQuestion.notifyDataSetChanged();
+	}
+
+	public void showEnd() {
+		setVisibleState(-1);
 	}
 }

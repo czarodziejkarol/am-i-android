@@ -3,20 +3,15 @@ package com.carlncarl.ami;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.gesture.GestureOverlayView.OnGestureListener;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListAdapter;
 import android.widget.Scroller;
 
@@ -120,7 +115,7 @@ public class HorizontialListView extends AdapterView<ListAdapter> {
 	private void addAndMeasureChild(final View child, int viewPos) {
 		LayoutParams params = child.getLayoutParams();
 		if(params == null) {
-			params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		}
 
 		addViewInLayout(child, viewPos, params, true);
@@ -204,6 +199,9 @@ public class HorizontialListView extends AdapterView<ListAdapter> {
 			
 			if(mRightViewIndex == mAdapter.getCount()-1){
 				mMaxX = mCurrentX + rightEdge - getWidth();
+				if(mMaxX<0){
+					mMaxX = 0;
+				}
 			}
 			mRightViewIndex++;
 		}

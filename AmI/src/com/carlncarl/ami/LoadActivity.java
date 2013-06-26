@@ -144,7 +144,48 @@ Button buttona = (Button) findViewById(R.id.buttonMyProfile);
             }
         }
     }
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		new LoadingTaskBack().execute("");
+	}
+	
+	
+	
+	private class LoadingTaskBack extends AsyncTask<Object, Integer, Player> {
 
+        @Override
+        protected Player doInBackground(Object... params) {
+            MySQLiteHelper myHel = new MySQLiteHelper(getBaseContext());
+
+            SQLiteDatabase db = myHel.getReadableDatabase();
+
+            String selection = "" + Database.Player.COLUMN_NAME_ME + " = 1";
+            Cursor c = db.query(Database.Player.TABLE_NAME, null, selection,
+                    null, null, null, null);
+
+            Player p = null;
+            if (c.getCount() != 0) {
+                p = new Player(c);
+            }
+            c.close();
+            db.close();
+            return p;
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+
+        }
+
+        @Override
+        protected void onPostExecute(Player result) {
+        	LoadActivity.this.player = result;
+        }
+    }
+	
 
     private class CreatePlayerTask extends AsyncTask<String, Integer, Player> {
 

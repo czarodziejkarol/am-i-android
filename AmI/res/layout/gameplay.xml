@@ -7,7 +7,8 @@
     <LinearLayout
         android:id="@+id/gameplay_panel"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/include1"
         android:orientation="vertical" >
 
         <TabHost
@@ -121,5 +122,13 @@
             </LinearLayout>
         </GridLayout>
     </LinearLayout>
+
+    <include
+        android:id="@+id/include1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        layout="@layout/news_panel" />
 
 </RelativeLayout>
