@@ -17,7 +17,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
-        android:text="test test test test test testtest testtest testtest testtest testtest testtest testtest testtest testtest testtest test"
+        android:text="test test test test r rrrrrrrrrrrrrrrr"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#000000" />
 
@@ -25,10 +25,10 @@
         android:id="@+id/imageHistory2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textHistoryAskedQuestion"
         android:layout_alignLeft="@+id/textHistoryAskedQuestion"
-        android:layout_marginBottom="-25dp"
-        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/textHistoryAskedQuestion"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="-20dp"
         android:src="@drawable/dymek_lewy" />
 
     <TextView
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/imageHistory2"
         android:layout_alignTop="@+id/imageHistory2"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="7dp"
         android:layout_marginTop="10dp"
         android:text="Tak : 0, Nie : 10, ? : 0"
         android:textAppearance="?android:attr/textAppearanceMedium"
