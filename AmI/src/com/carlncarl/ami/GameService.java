@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -19,7 +19,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
@@ -246,6 +245,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 		if (player.getStatus().equals(Player.STATUS_PEER)) {
 			WifiP2pConfig config = new WifiP2pConfig();
 			config.deviceAddress = player.getDevice().deviceAddress;
+			config.wps.setup = WpsInfo.PBC;
 			mManager.connect(mChannel, config, new ActionListener() {
 
 				@Override
@@ -261,7 +261,7 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 					player.setStatus(Player.STATUS_NOT_CONNECTED);
 					gameActivity.notifyAdapter();
 				}
-			});
+ 			});
 		}
 	}
 
@@ -372,6 +372,10 @@ public class GameService extends Service implements PeerListListener,ConnectionI
 	public void playerGuess(Action action) {
 		waitForPlayActivity();
 		playActivity.playerGuess(action);
+	}
+	public void endGame() {
+		waitForPlayActivity();
+		playActivity.endGame();
 	}
 
 	public void receveQuestion(Action action) {

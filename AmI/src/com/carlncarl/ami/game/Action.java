@@ -4,11 +4,11 @@ import java.util.LinkedList;
 
 public class Action {
     
-	public static final int ACTION_QUESTION = 0;
+	public static final int ACTION_QUESTION = 1;
 
 
 
-	public static final int ACTION_GUESS = 1;
+	public static final int ACTION_GUESS = 2;
 	
 	
 	

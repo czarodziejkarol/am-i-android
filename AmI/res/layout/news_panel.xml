@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="25dp"
+    android:background="@drawable/komunikat_panel"
+    android:orientation="horizontal" >
+
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:orientation="vertical" >
+
+        <com.carlncarl.ami.HorizontialListView
+            android:id="@+id/listviewNews"
+            android:layout_width="fill_parent"
+            android:layout_height="25dp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" >
+        </com.carlncarl.ami.HorizontialListView>
+    </LinearLayout>
+    
+<!--     <HorizontalScrollView -->
+<!--         android:id="@+id/horizontalScrollViewNews" -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="wrap_content" > -->
+
+<!--         <LinearLayout -->
+<!--             android:id="@+id/news_layout" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="match_parent" -->
+<!--             android:orientation="horizontal" > -->
+
+<!--         </LinearLayout> -->
+<!--     </HorizontalScrollView> -->
+
+</LinearLayout>

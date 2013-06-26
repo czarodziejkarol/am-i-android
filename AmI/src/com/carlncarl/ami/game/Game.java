@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -42,6 +43,22 @@ public class Game implements Serializable {
 	public static final int ANSWER_YES = 1;
 	public static final int ANSWER_NO = 0;
 	public static final int ANSWER_DONT_KNOW = 3;
+
+	public static String getAnswerString(int answer) {
+		String answerString = null;
+		switch (answer) {
+		case ANSWER_YES:
+			answerString = "Yes";
+			break;
+		case ANSWER_NO:
+			answerString = "No";
+			break;
+		default:
+			answerString = "Don't know";
+			break;
+		}
+		return answerString;
+	}
 
 	public static int GAME_PORT = 12287;
 
@@ -91,6 +108,7 @@ public class Game implements Serializable {
 	public Game(GameActivity activity) {
 
 		this.activity = activity;
+		
 		playersSet = new ArrayList<Player>();
 		finished = false;
 
@@ -395,10 +413,19 @@ public class Game implements Serializable {
 			myActions.add(action);
 		}
 
-		if (this.saveQuestions && !myQuestions.contains(question)) {
-			myQuestions.add(question);
-			gameService.getPlayActivity().notifyQuestionsAdapter();
-
+		if (this.saveQuestions) {
+			boolean contaion = false;
+			for (String myQ : myQuestions) {
+				if (question.equalsIgnoreCase(myQ)) {
+					contaion = true;
+				}
+			}
+			if (!contaion) {
+				myQuestions.add(question);
+				gameService.getPlayActivity().notifyQuestionsAdapter();
+				String[] params = {question};
+				new SaveQuestionsTask().execute(params );
+			}
 			// zapis do db
 		}
 
@@ -524,6 +551,7 @@ public class Game implements Serializable {
 	}
 
 	public void setMe(Player me) {
+		this.saveQuestions = me.isAuto_add();
 		this.me = me;
 	}
 
@@ -626,7 +654,7 @@ public class Game implements Serializable {
 	}
 
 	private void endGame() {
-
+		
 	}
 
 	public void sendCommunicat(Communicat com) {
@@ -859,6 +887,29 @@ public class Game implements Serializable {
 				Game.this.myQuestions = result;
 			}
 		}
+	}
+
+	private class SaveQuestionsTask extends
+			AsyncTask<String, Integer, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			String question = params[0];
+			MySQLiteHelper myHel = new MySQLiteHelper(
+					Game.this.gameService.getBaseContext());
+
+			SQLiteDatabase db = myHel.getWritableDatabase();
+			ContentValues values = new ContentValues();
+            values.put(Database.Question.COLUMN_NAME_QUESTION, question);
+            values.put(Database.Question.COLUMN_NAME_MY_QUESTION, 1);
+            db.insert(Database.Question.TABLE_NAME , null , values);      
+
+
+			db.close();
+			return true;
+
+		}
+
 	}
 
 	public Player getPlayerByUUID(String lastPlayerPhotoUUID) {

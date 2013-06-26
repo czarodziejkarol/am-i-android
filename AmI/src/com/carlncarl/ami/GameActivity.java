@@ -68,6 +68,8 @@ public class GameActivity extends Activity implements
 	private GameService gService = null;
 	private boolean serviceConnected = false;
 
+	
+	
 	private ServiceConnection sConn = new ServiceConnection() {
 
 		@Override
@@ -122,6 +124,7 @@ public class GameActivity extends Activity implements
 	// }
 	Game game;
 	private ListView listViewPrepare;
+	private Button prepareButton;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -166,8 +169,8 @@ public class GameActivity extends Activity implements
 				joinGame();
 			}
 		});
-
-		Button prepareButton = (Button) findViewById(R.id.button_prepare);
+		
+		prepareButton = (Button) findViewById(R.id.button_prepare);
 		prepareButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -175,6 +178,9 @@ public class GameActivity extends Activity implements
 				startPrepareGame();
 			}
 		});
+		if(!game.isServer()){
+			prepareButton.setVisibility(View.GONE);
+		}
 
 		selectButton = (Button) findViewById(R.id.buttonSelectCharacter);
 		selectButton.setOnClickListener(new View.OnClickListener() {
@@ -202,12 +208,20 @@ public class GameActivity extends Activity implements
 			viewCreateGame.setVisibility(View.GONE);
 			viewSearchGames.setVisibility(View.VISIBLE);
 		}
-
 	}
+
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+	
 
 	protected void chooseCharacter() {
 		if (characterText.getText() != null
 				&& !characterText.getText().toString().equals("")) {
+			selectButton.setVisibility(View.GONE);
 			gService.chooseCharacter(characterText.getText().toString());
 		} else {
 			Toast.makeText(this, "Choose character name!", Toast.LENGTH_SHORT)

@@ -1,11 +1,13 @@
 package com.carlncarl.ami;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -18,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.carlncarl.ami.HistoryFragment.HistoryTabInterface;
@@ -30,17 +34,23 @@ import com.carlncarl.ami.game.Game;
 import com.carlncarl.ami.game.Player;
 
 public class TabHostActivity extends FragmentActivity implements
-		TabHost.OnTabChangeListener, PlayTabInterface ,HistoryTabInterface,
-		SettingsTabInterface{
+		TabHost.OnTabChangeListener, PlayTabInterface, HistoryTabInterface,
+		SettingsTabInterface {
 	private TabHost mTabHost;
 	private Game game;
 	private HashMap<String, TabInfo> mapTabInfo = new HashMap<String, TabInfo>();
 	private TabInfo mLastTab = null;
-
+	
+	private NewsAdapter newsAdapter;
+	private LinkedList<Action> newsActions = new LinkedList<Action>();
+	
 	private GameService gService;
 	protected boolean serviceConnected;
+//	private HorizontalScrollView horizontalScrollViewNews;
+//	private LinearLayout newsLayout;
 	
-	
+	private HorizontialListView listviewNews;
+
 	private ServiceConnection sConn = new ServiceConnection() {
 
 		@Override
@@ -53,28 +63,28 @@ public class TabHostActivity extends FragmentActivity implements
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			gService = ((GameService.GameBinder) service).getService();
 			gService.setPlayActivity(TabHostActivity.this);
-			if(gService.getGame().isServer()){
+			if (gService.getGame().isServer()) {
 				gService.getGame().startTurn();
 			}
-			PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
+			PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager()
+					.findFragmentByTag("Tab1");
 			playFragment.setGService(gService);
 			game = gService.getGame();
 
-			//gService.initialize(GameActivity.this, game);
+			// gService.initialize(GameActivity.this, game);
 			// gService.setActivity(GameActivity.this);
 			// gService.setGame(game);
 			//
 			serviceConnected = true;
 		}
 	};
-	
+
 	protected void onStart() {
 		super.onStart();
 		bindService(new Intent(this, GameService.class), sConn,
 				Context.BIND_ABOVE_CLIENT);
 	};
-	
-	
+
 	private class TabInfo {
 		private String tag;
 		private Class clss;
@@ -144,7 +154,17 @@ public class TabHostActivity extends FragmentActivity implements
 																				// the
 																				// saved
 																				// state
+
 		}
+//		horizontalScrollViewNews = (HorizontalScrollView) findViewById(R.id.horizontalScrollViewNews);
+//		newsLayout = (LinearLayout) findViewById(R.id.news_layout);
+		
+		
+		
+		listviewNews = (HorizontialListView) findViewById(R.id.listviewNews);
+		newsAdapter = new NewsAdapter(this,newsActions );
+		listviewNews.setAdapter(newsAdapter);
+
 	}
 
 	/**
@@ -277,25 +297,24 @@ public class TabHostActivity extends FragmentActivity implements
 	public void setGame(Game game) {
 		this.game = game;
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.test, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.test, menu);
+		return true;
 	}
-	
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.item_exit:
-	            exitGame();
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.item_exit:
+			exitGame();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private void exitGame() {
@@ -326,72 +345,137 @@ public class TabHostActivity extends FragmentActivity implements
 		game.sendTypeMyCharacter(character);
 	}
 
-	public void startNewTurn(final Player p){
+	public void startNewTurn(final Player p) {
 		this.runOnUiThread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
+				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager()
+						.findFragmentByTag("Tab1");
 				playFragment.turnPlayer(p);
 			}
 		});
 	}
-	
-	
-	public void receiveQuestion(final Player p, final String question){
+
+	public void receiveQuestion(final Player p, final String question) {
 
 	}
 
 	public void receiveAction(final Action action) {
-		if(action.getType() == Action.ACTION_QUESTION){
-		this.runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
-				playFragment.receivedQuestion(action.getPlayer(), action.getValue());
-			}
-		});
+		if (action.getType() == Action.ACTION_QUESTION) {
+			this.runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager()
+							.findFragmentByTag("Tab1");
+					playFragment.receivedQuestion(action.getPlayer(),
+							action.getValue());
+				}
+			});
 		} else {
-//			this.runOnUiThread(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
-//					playFragment.receivedQuestion(action.getPlayer(), action.getValue());
-//				}
-//			});
+			this.runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					if(game.getMyActions().contains(action.getParentAction())){
+						
+						newsActions.addFirst(action);
+						newsAdapter.notifyDataSetChanged();
+//						LayoutParams lparams = new LayoutParams(
+//								LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//						TextView tv = new TextView(TabHostActivity.this);
+//						tv.setLayoutParams(lparams);
+//						String messageText = action.getPlayer().getName() + " answered "
+//								+ Game.getAnswerString(Integer.parseInt( action.getValue())).toLowerCase();
+//						tv.setText(messageText);
+//						newsLayout.addView(tv, 0);
+//						TextView[] params = { tv };
+//						new TextViewTask().execute(params);
+						
+					}
+				}
+			});
 		}
 	}
 
 	public void notifyQuestionsAdapter() {
 		runOnUiThread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager().findFragmentByTag("Tab1");
-				if(playFragment.isAdded()){
+				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager()
+						.findFragmentByTag("Tab1");
+				if (playFragment.isAdded()) {
 					playFragment.notifyQuestionsAdapter();
 				}
-				
+
 			}
 		});
 	}
 
 	public void playerGuess(final Action action) {
 		runOnUiThread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				Toast.makeText(TabHostActivity.this, action.getPlayer().getName()+ " guessed "+action.getValue()+" Position"+action.getPlayer().getWinPos(), Toast.LENGTH_SHORT).show();
+
+				Toast.makeText(
+						TabHostActivity.this,
+						action.getPlayer().getName() + " guessed "
+								+ action.getValue() + " Position: "
+								+ action.getPlayer().getWinPos(),
+						Toast.LENGTH_SHORT).show();
+
+				newsActions.addFirst(action);
+				newsAdapter.notifyDataSetChanged();
+				
+				
+//				LayoutParams lparams = new LayoutParams(
+//						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//				TextView tv = new TextView(TabHostActivity.this);
+//				tv.setLayoutParams(lparams);
+//				String messageText = action.getPlayer().getName() + " guessed "
+//						+ action.getValue();
+//
+//				if (action.getPlayer().getWinPos() != 0) {
+//					messageText += ". Position: "
+//							+ action.getPlayer().getWinPos();
+//				}
+//
+//				tv.setText(messageText);
+//				newsLayout.addView(tv, 0);
+//				TextView[] params = { tv };
+//				new TextViewTask().execute(params);
 			}
 		});
 	}
+//
+//	private class TextViewTask extends AsyncTask<TextView, Integer, TextView> {
+//
+//		@Override
+//		protected TextView doInBackground(TextView... params) {
+//			TextView tv = params[0];
+//			try {
+//				Thread.sleep(4000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return tv;
+//
+//		}
+//
+//		@Override
+//		protected void onPostExecute(TextView result) {
+//			newsLayout.removeView(result);
+//		}
+//	}
 
 	@Override
 	public void changeSettingsQuestions(boolean saveQuestions) {
 		game.setSaveQuestions(saveQuestions);
-		
+
 	}
 
 	@Override
@@ -403,5 +487,17 @@ public class TabHostActivity extends FragmentActivity implements
 	public void leaveGame() {
 		exitGame();
 	}
-	
+
+	public void endGame() {
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				PlayGameFragment playFragment = (PlayGameFragment) getSupportFragmentManager()
+						.findFragmentByTag("Tab1");
+				playFragment.showEnd();
+			}
+		});
+	}
+
 }

@@ -88,9 +88,6 @@ public class HistoryAdapter extends ArrayAdapter<Action> {
 					textBackYes.setImageDrawable(context.getResources().getDrawable(R.drawable.dymek_lewy_nie));
 				}
 				
-				
-				
-				
 				break;
 			
 			
