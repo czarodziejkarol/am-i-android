@@ -47,11 +47,11 @@
         android:id="@+id/lobbyPlayerStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/lobbyPlayerImg"
         android:layout_alignLeft="@+id/lobbyCharacterName"
+        android:layout_below="@+id/lobbyCharacterName"
         android:text="status"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </RelativeLayout>

@@ -49,8 +49,12 @@ public class LobbyAdapter extends ArrayAdapter<Player> {
 			textViewLobbyPlayerHero.setText(values.get(position)
 					.getCharacter());
 		}
-		textViewLobbyPlayerStatus.setText(values.get(position).getStatus());
-		
+		if(values.get(position).getWinPos() > 0)
+		textViewLobbyPlayerStatus.setText("Win in " + values.size() + " round");
+		else{
+			textViewLobbyPlayerStatus.setVisibility(View.INVISIBLE);
+		} 
+			
 		if(values.get(position).getImage().equals(Player.DEFAULT_PHOTO)){
 			imageViewLobbyPlayerImage.setImageResource(R.drawable.default_icon);
 		} else {
